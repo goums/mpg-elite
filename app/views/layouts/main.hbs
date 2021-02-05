@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>L'Elite du foot</title>
+  <link rel="icon" href="favicon.svg" />
+  <link rel="stylesheet" href="mpg.css" />
+  <link href="//db.onlinewebfonts.com/c/99ec515cf2e0c3afd21659c007955a32?family=LEQUIPE+Regular" rel="stylesheet"
+    type="text/css" />
+  <link href="//db.onlinewebfonts.com/c/7f05d48f4a28cc6bd2f81faa3c7551f1?family=DIN+Next+LT+Pro+Medium+Cond"
+    rel="stylesheet" type="text/css" />
+  <style>
+    @import url(//db.onlinewebfonts.com/c/99ec515cf2e0c3afd21659c007955a32?family=LEQUIPE+Regular);
+
+    @font-face {
+      font-family: "LEQUIPE-Regular";
+      src: url("//db.onlinewebfonts.com/t/99ec515cf2e0c3afd21659c007955a32.eot");
+      src: url("//db.onlinewebfonts.com/t/99ec515cf2e0c3afd21659c007955a32.eot?#iefix") format("embedded-opentype"), url("//db.onlinewebfonts.com/t/99ec515cf2e0c3afd21659c007955a32.woff2") format("woff2"), url("//db.onlinewebfonts.com/t/99ec515cf2e0c3afd21659c007955a32.woff") format("woff"), url("//db.onlinewebfonts.com/t/99ec515cf2e0c3afd21659c007955a32.ttf") format("truetype"), url("//db.onlinewebfonts.com/t/99ec515cf2e0c3afd21659c007955a32.svg#LEQUIPE Regular") format("svg");
+    }
+
+    h1 {
+      padding: 12px;
+      line-height: 48px;
+      font-weight: 400;
+      text-align: center;
+      margin: 0;
+      font-family: "LEQUIPE-Regular", sans-serif;
+      font-size: 30px;
+      color: rgb(29, 29, 27);
+    }
+
+    .elite {
+      font-family: "LEQUIPE-Regular", sans-serif;
+      font-size: 30px;
+      color: rgb(214, 30, 0);
+    }
+  </style>
+
+
+  <style data-styled="" data-styled-version="4.4.1"></style>
+  <style data-jss="" data-meta="MuiPaper">
+    .jss329 {
+      background-color: #fff;
+    }
+
+    .jss330 {
+      border-radius: 4px;
+    }
+
+    .jss331 {
+      box-shadow: none;
+    }
+
+    .jss332 {
+      box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss333 {
+      box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss334 {
+      box-shadow: 0px 1px 8px 0px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 3px 3px -2px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss335 {
+      box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss336 {
+      box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss337 {
+      box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss338 {
+      box-shadow: 0px 4px 5px -2px rgba(0, 0, 0, 0.2), 0px 7px 10px 1px rgba(0, 0, 0, 0.14), 0px 2px 16px 1px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss339 {
+      box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss340 {
+      box-shadow: 0px 5px 6px -3px rgba(0, 0, 0, 0.2), 0px 9px 12px 1px rgba(0, 0, 0, 0.14), 0px 3px 16px 2px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss341 {
+      box-shadow: 0px 6px 6px -3px rgba(0, 0, 0, 0.2), 0px 10px 14px 1px rgba(0, 0, 0, 0.14), 0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss342 {
+      box-shadow: 0px 6px 7px -4px rgba(0, 0, 0, 0.2), 0px 11px 15px 1px rgba(0, 0, 0, 0.14), 0px 4px 20px 3px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss343 {
+      box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 12px 17px 2px rgba(0, 0, 0, 0.14), 0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss344 {
+      box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 13px 19px 2px rgba(0, 0, 0, 0.14), 0px 5px 24px 4px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss345 {
+      box-shadow: 0px 7px 9px -4px rgba(0, 0, 0, 0.2), 0px 14px 21px 2px rgba(0, 0, 0, 0.14), 0px 5px 26px 4px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss346 {
+      box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2), 0px 15px 22px 2px rgba(0, 0, 0, 0.14), 0px 6px 28px 5px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss347 {
+      box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss348 {
+      box-shadow: 0px 8px 11px -5px rgba(0, 0, 0, 0.2), 0px 17px 26px 2px rgba(0, 0, 0, 0.14), 0px 6px 32px 5px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss349 {
+      box-shadow: 0px 9px 11px -5px rgba(0, 0, 0, 0.2), 0px 18px 28px 2px rgba(0, 0, 0, 0.14), 0px 7px 34px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss350 {
+      box-shadow: 0px 9px 12px -6px rgba(0, 0, 0, 0.2), 0px 19px 29px 2px rgba(0, 0, 0, 0.14), 0px 7px 36px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss351 {
+      box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2), 0px 20px 31px 3px rgba(0, 0, 0, 0.14), 0px 8px 38px 7px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss352 {
+      box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2), 0px 21px 33px 3px rgba(0, 0, 0, 0.14), 0px 8px 40px 7px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss353 {
+      box-shadow: 0px 10px 14px -6px rgba(0, 0, 0, 0.2), 0px 22px 35px 3px rgba(0, 0, 0, 0.14), 0px 8px 42px 7px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss354 {
+      box-shadow: 0px 11px 14px -7px rgba(0, 0, 0, 0.2), 0px 23px 36px 3px rgba(0, 0, 0, 0.14), 0px 9px 44px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .jss355 {
+      box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+    }
+  </style>
+  <style data-jss="" data-meta="MuiCard">
+    .jss328 {
+      overflow: hidden;
+      box-shadow: none;
+      border-radius: 20px;
+    }
+  </style>
+  <style data-jss="" data-meta="MuiCardContent">
+    .jss356 {
+      padding: 16px;
+    }
+
+    .jss356:last-child {
+      padding-bottom: 24px;
+    }
+  </style>
+  <style data-jss="" data-meta="MuiSvgIcon">
+    .jss585 {
+      fill: currentColor;
+      width: 1em;
+      height: 1em;
+      display: inline-block;
+      font-size: 24px;
+      transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .jss586 {
+      color: #45c945;
+    }
+
+    .jss587 {
+      color: #4054cc;
+    }
+
+    .jss588 {
+      color: rgba(0, 0, 0, 0.54);
+    }
+
+    .jss589 {
+      color: #f44336;
+    }
+
+    .jss590 {
+      color: rgba(0, 0, 0, 0.26);
+    }
+
+    .jss591 {
+      font-size: inherit;
+    }
+
+    .jss592 {
+      font-size: 20px;
+    }
+
+    .jss593 {
+      font-size: 35px;
+    }
+  </style>
+  <style data-jss="" data-meta="MuiInputBase">
+    .jss568 {
+      color: #ffffff;
+      cursor: text;
+      display: inline-flex;
+      font-size: 1rem;
+      font-family: Ubuntu, Open Sans, sans-serif;
+      line-height: 1.1875em;
+      align-items: center;
+    }
+
+    .jss568.jss571 {
+      color: rgba(0, 0, 0, 0.38);
+      cursor: default;
+    }
+
+    .jss576 {
+      padding: 6px 0 7px;
+    }
+
+    .jss577 {
+      width: 100%;
+    }
+
+    .jss578 {
+      font: inherit;
+      color: currentColor;
+      width: 100%;
+      border: 0;
+      margin: 0;
+      padding: 6px 0 7px;
+      display: block;
+      min-width: 0;
+      box-sizing: content-box;
+      background: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .jss578::-webkit-input-placeholder {
+      color: currentColor;
+      opacity: 0.42;
+      transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    }
+
+    .jss578::-moz-placeholder {
+      color: currentColor;
+      opacity: 0.42;
+      transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    }
+
+    .jss578:-ms-input-placeholder {
+      color: currentColor;
+      opacity: 0.42;
+      transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    }
+
+    .jss578::-ms-input-placeholder {
+      color: currentColor;
+      opacity: 0.42;
+      transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    }
+
+    .jss578:focus {
+      outline: 0;
+    }
+
+    .jss578:invalid {
+      box-shadow: none;
+    }
+
+    .jss578::-webkit-search-decoration {
+      -webkit-appearance: none;
+    }
+
+    .jss578.jss571 {
+      opacity: 1;
+    }
+
+    label[data-shrink=false]+.jss569 .jss578::-webkit-input-placeholder {
+      opacity: 0;
+    }
+
+    label[data-shrink=false]+.jss569 .jss578::-moz-placeholder {
+      opacity: 0;
+    }
+
+    label[data-shrink=false]+.jss569 .jss578:-ms-input-placeholder {
+      opacity: 0;
+    }
+
+    label[data-shrink=false]+.jss569 .jss578::-ms-input-placeholder {
+      opacity: 0;
+    }
+
+    label[data-shrink=false]+.jss569 .jss578:focus::-webkit-input-placeholder {
+      opacity: 0.42;
+    }
+
+    label[data-shrink=false]+.jss569 .jss578:focus::-moz-placeholder {
+      opacity: 0.42;
+    }
+
+    label[data-shrink=false]+.jss569 .jss578:focus:-ms-input-placeholder {
+      opacity: 0.42;
+    }
+
+    label[data-shrink=false]+.jss569 .jss578:focus::-ms-input-placeholder {
+      opacity: 0.42;
+    }
+
+    .jss579 {
+      padding-top: 3px;
+    }
+
+    .jss580 {
+      resize: none;
+      padding: 0;
+    }
+
+    .jss581 {
+      height: 1.1875em;
+    }
+
+    .jss582 {
+      -moz-appearance: textfield;
+      -webkit-appearance: textfield;
+    }
+  </style>
+  <style data-jss="" data-meta="MuiInput">
+    .jss555 {
+      color: black;
+      height: 40px;
+      border: 1px solid #e5eaee;
+      padding: 10px;
+      outline: none;
+      position: relative;
+      font-size: 16px;
+      font-weight: bold;
+      font-familu: Open Sans;
+      border-radius: 4px;
+      background-color: #ffffff;
+    }
+
+    label+.jss556 {
+      margin-top: 16px;
+    }
+
+    .jss557 {
+      border-color: #45c945;
+    }
+
+    .jss559:after {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      content: "";
+      position: absolute;
+      transform: scaleX(0);
+      transition: transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+      border-bottom: 2px solid rgb(48, 140, 48);
+      pointer-events: none;
+    }
+
+    .jss559.jss557:after {
+      transform: scaleX(1);
+    }
+
+    .jss559.jss560:after {
+      transform: scaleX(1);
+      border-bottom-color: #f44336;
+    }
+
+    .jss559:before {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      content: "\00a0";
+      position: absolute;
+      transition: border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+      pointer-events: none;
+    }
+
+    .jss559:hover:not(.jss558):not(.jss557):not(.jss560):before {
+      border-bottom: 2px solid #ffffff;
+    }
+
+    .jss559.jss558:before {
+      border-bottom-style: dotted;
+    }
+
+    @media (hover: none) {
+      .jss559:hover:not(.jss558):not(.jss557):not(.jss560):before {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+      }
+    }
+
+    .jss563::placeholder {
+      color: #959daf;
+      opacity: 1;
+      font-weight: normal;
+    }
+  </style>
+  <style data-jss="" data-meta="MuiNativeSelect">
+    .jss548 {
+      width: 100%;
+      position: relative;
+    }
+
+    .jss549 {
+      width: calc(100% - 32px);
+      height: 1.1875em;
+      cursor: pointer;
+      min-width: 16px;
+      user-select: none;
+      padding-right: 32px;
+      border-radius: 0;
+      -moz-appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .jss549:focus {
+      border-radius: 0;
+      background-color: #ffffff;
+    }
+
+    .jss549::-ms-expand {
+      display: none;
+    }
+
+    .jss549.jss553 {
+      cursor: default;
+    }
+
+    .jss549[multiple] {
+      height: auto;
+    }
+
+    .jss549:not([multiple]) option,
+    .jss549:not([multiple]) optgroup {
+      background-color: #fff;
+    }
+
+    .jss550 {
+      width: calc(100% - 44px);
+    }
+
+    .jss551 {
+      width: calc(100% - 46px);
+      border-radius: 4px;
+    }
+
+    .jss552 {
+      width: auto;
+      height: auto;
+      overflow: hidden;
+      min-height: 1.1875em;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .jss554 {
+      top: calc(50% - 12px);
+      right: 0;
+      color: rgba(0, 0, 0, 0.54);
+      position: absolute;
+      pointer-events: none;
+    }
+  </style>
+  <style data-jss="">
+    .jss213 {
+      fill: #4054cc;
+    }
+
+    .jss214 {
+      border-color: #4054cc;
+    }
+  </style>
+  <style data-jss="">
+    .jss547 {
+      color: #959daf;
+      font-weight: normal;
+    }
+  </style>
+  <style data-jss="">
+    .jss212 {
+      font-size: 1.15em !important;
+      overflow-x: hidden !important;
+      background-color: #4054cc;
+    }
+  </style>
+  <style data-jss="">
+    .jss211 {
+      background-color: #45c945;
+    }
+  </style>
+  <style data-jss="">
+    .jss358 {
+      color: #4054cc;
+    }
+
+    .jss359 {
+      border-bottom-color: #4054cc;
+    }
+
+    .jss360 {
+      fill: #4054cc;
+    }
+  </style>
+  <style data-jss="">
+    .jss357 {
+      border-bottom: solid #e5eaee 1px;
+      background-color: #ffffff;
+    }
+  </style>
+  <style data-jss="">
+    .jss327 {
+      padding: 16px 20px;
+    }
+  </style>
+  <style data-jss="">
+    .jss324 {
+      height: 50px;
+    }
+
+    .jss325 {
+      padding: 0 !important;
+    }
+
+    .jss326 {
+      width: 100%;
+      height: 50px;
+      z-index: 24;
+      position: fixed;
+      max-width: none;
+      min-height: 0;
+      box-shadow: 0px 1px 8px 0px rgba(0, 0, 0, 0), 0px 1px 4px 0px rgba(0, 0, 0, 0.14), 0px 3px 3px -2px rgba(0, 0, 0, 0.12);
+      border-radius: 0;
+      background-color: #333333;
+    }
+  </style>
+  <style data-jss="">
+    .jss545 {
+      color: #4054cc;
+      opacity: 0.8;
+      font-size: 12px;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .jss546 {
+      opacity: 1;
+      font-weight: bold;
+    }
+  </style>
+  <style data-jss="">
+    .jss594 {
+      border-left: 5px solid #45c945;
+    }
+
+    .jss595 {
+      border-left: 5px solid red;
+    }
+  </style>
+  <style data-jss="">
+    .jss209 {
+      margin: 20px;
+      padding: 10px;
+    }
+
+    .jss210 {
+      padding: 20px;
+    }
+  </style>
+  <style>
+    .index__playerTitleTextStyle___1r9ga {
+      width: 110px;
+    }
+
+    @media screen and (max-width: 768px) {
+      .jss328 {
+        border-radius: 0
+      }
+    }
+
+    @media screen and (min-width: 768px) {
+
+      .index__d___1IAAG svg,
+      .index__n___2H3lP svg,
+      .index__v___30agd svg {
+        opacity: 0.5;
+      }
+    }
+  </style>
+</head>
+
+
+
+<body>
+  <h1> <span class="elite">L'élite</span> du foot</h1>
+
+  {{{body}}}
+
+</body>
+
+</html>
