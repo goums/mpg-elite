@@ -1,0 +1,185 @@
+<div>
+  <div>
+    <div>
+      <div>
+        <div class="jss329 jss334 jss330 jss328 index__root___3Pl0v index__root___OCE_d">
+          <div class="jss356 index__CardContent___2Ec_l">
+            <div style="margin-top: 6px;">
+              <div>
+                <div>
+                  <div class="index__headerStyle___twJGI" style="align-items: center; margin-bottom: 8px;">
+                    <div class="index__columnWidthBorder___3hP3u"></div>
+                    <div class="index__columnWidthRanker___FAeK3"></div>
+                    <div
+                      class="index__columnWidthPlayer___1c4v9 index__textDesign___ZYGit index__textHeightHeader___39yAB">
+                      Équipes</div>
+                    <div
+                      class="index__columnWidthPoints___1as1C index__textDesign___ZYGit index__textHeightHeader___39yAB index__centerColumn___10x1Y">
+                      PTS</div>
+                    <div
+                      class="index__columnWidthPlayed___3x01U index__textDesign___ZYGit index__textHeightHeader___39yAB index__centerColumn___10x1Y">
+                      J</div>
+                    <div
+                      class="index__columnWidthVictory___3QcF_ index__textDesign___ZYGit index__textHeightHeader___39yAB index__centerColumn___10x1Y">
+                      V</div>
+                    <div
+                      class="index__columnWidthNul___Kv1a- index__textDesign___ZYGit index__textHeightHeader___39yAB index__centerColumn___10x1Y">
+                      N</div>
+                    <div
+                      class="index__columnWidthDefeat___1waWt index__textDesign___ZYGit index__textHeightHeader___39yAB index__centerColumn___10x1Y">
+                      D</div>
+                    <div
+                      class="index__columnWidthGoal___50582 index__textDesign___ZYGit index__textHeightHeader___39yAB index__centerColumn___10x1Y">
+                      BP</div>
+                    <div
+                      class="index__columnWidthGoalConceded___2l8MH index__textDesign___ZYGit index__textHeightHeader___39yAB index__centerColumn___10x1Y">
+                      BC</div>
+                    <div
+                      class="index__columnWidthDifference___3_ipx index__textDesign___ZYGit index__textHeightHeader___39yAB index__centerColumn___10x1Y">
+                      +/-</div>
+                  </div>
+                  <div>
+                    {{#each ranking}}
+                    <div class="index__bodyStyle___h4xYl">
+                      <div class="index__flexMode___1piMo index__setMaxHeight___3FzJy index__setMaxWidth___r0NVr">
+                        <div class="index__columnWidthBorder___3hP3u"
+                          style="border-left: 5px solid {{indexToRankColor @index}};">
+                          <div class="index__flexMode___1piMo">
+                            <div></div>
+                          </div>
+                        </div>
+                        <div class="index__columnWidthRanker___FAeK3 index__centerContent___1sG3F">
+                          <div class="index__flexMode___1piMo">
+                            <div class="index__flexModeColumn___19TM9">
+                              <div class="index__rankerTextStyle___i2P-h" style="font-family: Open Sans,sans-serif;">
+                                {{indexToRank @index}}</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="index__columnWidthPlayer___1c4v9 index__centerContent___1sG3F">
+                          <div class="index__flexMode___1piMo">
+                            <div class="index__centerContent___1sG3F" style="margin-right: 16px;"><img src="{{icon}}"
+                                alt="Icone" class="index__jersey___2Eyco"></div>
+                            <div class="index__flexModeColumn___19TM9">
+                              <div class="index__flexMode___1piMo"><span
+                                  class="index__playerTitleTextStyle___1r9ga index__padder___2MA83">{{name}}</span>
+                              </div>
+                              <div class="index__flexMode___1piMo">
+                                {{#each series}}
+                                <li class="{{serieClassname this}} index__seriesSpace___aFoBo"><span
+                                    class="index__root___2XTpz jss213"><svg width="9" height="9" viewBox="657 226 9 9">
+                                      <circle id="Oval-193" stroke="none" cx="661.5" cy="230.5" r="4.5"></circle>
+                                    </svg></span></li>
+                                {{/each}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="index__columnWidthPoints___1as1C index__centerContent___1sG3F">
+                          <div class="index__flexMode___1piMo">
+                            <div class="index__flexModeColumn___19TM9" style="position:relative">
+                              <div class="index__centerColumn___10x1Y index__textBold___14jFv">{{points}}</div>
+                              {{#if target}}
+                              <div style="height: 24px; width: 24px; position: absolute; top: -4px; left: -30px;">
+                                <span class="index__root___2XTpz jss213"><svg width="24" height="24"
+                                    viewBox="0 0 112 112">
+                                    <defs>
+                                      <circle id="target" cx="45" cy="45" r="45"></circle>
+                                      <filter x="-17.8%" y="-15.6%" width="135.6%" height="135.6%"
+                                        filterUnits="objectBoundingBox" id="target1">
+                                        <feMorphology radius="1" operator="dilate" in="SourceAlpha"
+                                          result="shadowSpreadOuter1"></feMorphology>
+                                        <feOffset dy="2" in="shadowSpreadOuter1" result="shadowOffsetOuter1">
+                                        </feOffset>
+                                        <feGaussianBlur stdDeviation="4" in="shadowOffsetOuter1"
+                                          result="shadowBlurOuter1"></feGaussianBlur>
+                                        <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out"
+                                          result="shadowBlurOuter1"></feComposite>
+                                        <feColorMatrix
+                                          values="0 0 0 0 1 0 0 0 0 0.17254902 0 0 0 0 0.282352941 0 0 0 0.298828125 0"
+                                          in="shadowBlurOuter1"></feColorMatrix>
+                                      </filter>
+                                    </defs>
+                                    <g fill="none" fill-rule="evenodd">
+                                      <g transform="translate(10 8)" fill-rule="nonzero">
+                                        <use fill="#000" filter="url(#target1)" xlink:href="#target"></use>
+                                        <use fill-opacity=".88" fill="#FFF" xlink:href="#target"></use>
+                                      </g>
+                                      <path
+                                        d="M57.542 74.652c-.572.066-1.143.11-1.729.125V62.535c4.893-.41 8.754-4.535 8.754-9.539 0-4.996-3.86-9.12-8.754-9.53V31.222c.586.015 1.157.06 1.729.125 10.006 1.165 17.947 9.106 19.111 19.106.096.835.147 1.685.147 2.542a20.9 20.9 0 0 1-.154 2.55c-1.157 10.007-9.098 17.941-19.104 19.106zm-1.729-29.546c3.992.403 7.128 3.788 7.128 7.89 0 4.11-3.136 7.495-7.128 7.898V45.106zm-1.633-1.64c-4.901.417-8.754 4.534-8.754 9.53 0 5.004 3.853 9.121 8.754 9.539v12.242a16.836 16.836 0 0 1-1.73-.132c-10.005-1.158-17.939-9.092-19.096-19.1a20.9 20.9 0 0 1-.154-2.549c0-.857.051-1.707.147-2.542 1.164-10 9.098-17.941 19.104-19.099a16.836 16.836 0 0 1 1.729-.132v12.242zm0 17.428c-3.993-.41-7.12-3.795-7.12-7.898 0-4.095 3.127-7.48 7.12-7.89v15.788zm33.27-10.44h-7.522C78.734 38.66 69.335 29.26 57.542 28.066v-7.524A2.539 2.539 0 0 0 55 18a2.545 2.545 0 0 0-2.55 2.542v7.524c-11.793 1.194-21.191 10.6-22.378 22.388h-7.53A2.548 2.548 0 0 0 20 52.996a2.55 2.55 0 0 0 2.542 2.55h7.53C31.26 67.333 40.657 76.74 52.451 77.934v7.524A2.545 2.545 0 0 0 55 88a2.539 2.539 0 0 0 2.542-2.542v-7.524c11.793-1.194 21.192-10.593 22.386-22.388h7.523A2.551 2.551 0 0 0 90 52.996a2.55 2.55 0 0 0-2.55-2.542z"
+                                        fill="#FF2D48"></path>
+                                    </g>
+                                  </svg></span>
+                              </div>
+                              {{/if}}
+                            </div>
+                          </div>
+
+                        </div>
+                        <div class="index__columnWidthPlayed___3x01U index__centerContent___1sG3F">
+                          <div class="index__flexMode___1piMo">
+                            <div class="index__flexModeColumn___19TM9">
+                              <div class="index__centerColumn___10x1Y index__textDesign___ZYGit">{{played}}</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="index__columnWidthVictory___3QcF_ index__centerContent___1sG3F">
+                          <div class="index__flexMode___1piMo">
+                            <div class="index__flexModeColumn___19TM9">
+                              <div class="index__centerColumn___10x1Y index__textDesign___ZYGit">{{wins}}</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="index__columnWidthNul___Kv1a- index__centerContent___1sG3F">
+                          <div class="index__flexMode___1piMo">
+                            <div class="index__flexModeColumn___19TM9">
+                              <div class="index__centerColumn___10x1Y index__textDesign___ZYGit">{{draws}}</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="index__columnWidthDefeat___1waWt index__centerContent___1sG3F">
+                          <div class="index__flexMode___1piMo">
+                            <div class="index__flexModeColumn___19TM9">
+                              <div class="index__centerColumn___10x1Y index__textDesign___ZYGit">{{loses}}</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="index__columnWidthGoal___50582 index__centerContent___1sG3F">
+                          <div class="index__flexMode___1piMo">
+                            <div class="index__flexModeColumn___19TM9">
+                              <div class="index__centerColumn___10x1Y index__textDesign___ZYGit">{{goalFor}}</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="index__columnWidthGoalConceded___2l8MH index__centerContent___1sG3F">
+                          <div class="index__flexMode___1piMo">
+                            <div class="index__flexModeColumn___19TM9">
+                              <div class="index__centerColumn___10x1Y index__textDesign___ZYGit">{{goalAgainst}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="index__columnWidthDifference___3_ipx index__centerContent___1sG3F">
+                          <div class="index__flexMode___1piMo">
+                            <div class="index__flexModeColumn___19TM9">
+                              <div class="index__centerColumn___10x1Y index__textDesign___ZYGit">{{difference}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div style="display: flex; width: 100%; align-items: center;">
+                        <div class="index__spacerStyle___3jQcy"></div>
+                      </div>
+                    </div>
+                    {{/each}}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

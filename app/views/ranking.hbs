@@ -1,0 +1,73 @@
+<div data-v-6d00491e="" class="Caption layout" style="background-color: rgb(9, 28, 62);">
+  <div data-v-6d00491e="" class="Caption__content caption"
+    style="background-color: rgb(9, 28, 62); padding:2px 8px; position:relative;">
+    <!---->
+    <div data-v-4e406f18="" data-v-6d00491e="" class="caption__image">
+      <img data-v-4e406f18="" alt="" title="" src="/L1-2020-2021.png" class="Logo" height="24px">
+      <span style="
+            color: white;
+            position: absolute;
+            top: 6px;
+            font-weight: 500;
+            font-size: 15px;
+            letter-spacing: -.32px;
+            right: 6px;
+        ">2020 / 2021
+      </span>
+    </div>
+    <!---->
+  </div>
+</div>
+
+<div id="content" class="index__content___1tHYv">
+  <div class="layout-children" style="position: relative; margin: auto; max-width: 1000px;
+            margin-bottom: 12px;">
+    <div class="jss329 jss334 jss330 jss328 index__root___3Pl0v index__maxWidthMenu___2Z9vF index__menuRadius___3HZ9q">
+      <div class="jss356 index__menu___3kcJw index__CardContent___2Ec_l">
+        <div class="" style="
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-align: center;
+            align-items: center;
+            -ms-flex-pack: center;
+            justify-content: center;">
+          <div style="width: 90%;">
+            <div class="">
+              <div class="jss568 jss555 jss577 jss562">
+                <div class="jss548"><select class="jss549 jss578 jss563" id="ranking-select">
+                    <option value="rankings-cumulate">Classement cumulé</option>
+                    <option value="rankings-first-phase">Phase Aller</option>
+                    <option value="rankings-second-phase">Phase Retour</option>
+                  </select><svg class="jss585 jss554" focusable="false" viewBox="0 0 24 24" aria-hidden="true"
+                    role="presentation">
+                    <path d="M7 10l5 5 5-5z"></path>
+                  </svg></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div id="rankings-cumulate" class="ranking-table">
+      {{> table ranking=rankingCumulate }}
+    </div>
+    <div id="rankings-first-phase" class="ranking-table" style="display:none">
+      {{> table ranking=rankingFirstPhase }}
+    </div>
+    <div id="rankings-second-phase" class="ranking-table" style="display:none">
+      {{> table ranking=rankingSecondPhase }}
+    </div>
+  </div>
+</div>
+</div>
+
+
+<script>
+  const select = document.querySelector('#ranking-select');
+  select.addEventListener('change', (event) => {
+    document.querySelectorAll('.ranking-table').forEach(e => e.style.display = "none");
+    document.querySelector(`#${event.target.value}`).style.display = "block";
+  });
+</script>
