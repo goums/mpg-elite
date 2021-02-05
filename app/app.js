@@ -13,17 +13,6 @@ const rankHelper = require("./helpers/rank");
 const rankingRouter = require("./routes/ranking");
 const app = express();
 
-if (app.get("env") === "production") {
-  //Enforce https use
-  app.use((req, res, next) => {
-    if (req.headers["x-forwarded-proto"] !== "https" && req.hostname !== "localhost") {
-      res.redirect("https://" + req.hostname + req.url);
-    } else {
-      next();
-    }
-  });
-}
-
 //Setup favicon
 app.use(favicon(path.join(__dirname, "..", "public", "favicon.svg")));
 
