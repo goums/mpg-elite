@@ -3,7 +3,7 @@
 const express = require("express");
 const router = express.Router();
 const mpg = require("../services/mpg");
-const debug = require("debug")("mpg:leaderboard");
+const debug = require("debug")("mpg:ranking");
 
 //Render Ranking view
 router.get("/", async (req, res) => {
@@ -12,6 +12,7 @@ router.get("/", async (req, res) => {
   const rankingCumulate = mpg.getCumulateRanking(rankingFirstPhase, rankingSecondPhase);
 
   res.render("ranking", {
+    menu: "ranking",
     rankingFirstPhase,
     rankingSecondPhase,
     rankingCumulate
