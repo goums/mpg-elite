@@ -1,0 +1,151 @@
+<div id="content" class="index__content___1tHYv">
+  <div class="layout-children" style="position: relative; margin: auto; max-width: 1000px;
+            margin-bottom: 12px;">
+    <div class="jss329 jss334 jss330 jss328 index__root___3Pl0v index__maxWidthMenu___2Z9vF index__menuRadius___3HZ9q">
+      <div class="jss356 index__menu___3kcJw index__CardContent___2Ec_l">
+        <div class="" style="
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-align: center;
+            align-items: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            margin-bottom: -12px;">
+          <div style="display: inline-flex;">
+            {{#if prevMatchDay}}
+            <p><a href="/calendar/{{prevMatchDay}}"><i class="index__caret___2NU1N fa fa-caret-left"></i></a></p>
+            {{/if}}
+          </div>
+          <div class="index__nativeSelect___33L71" style="display: inline-flex;">
+            <div class="index__select___14WvW">
+              <div class="jss568 jss555 jss577 jss562">
+                <div class="jss548"><select class="jss549 jss578 jss563" id="calendar-select">
+                    {{#each days}}
+                    <option value="{{@this}}" {{#if (eq @this ../currentMatchDay)}}selected{{/if}}>Journée {{@this}}
+                    </option>
+                    {{/each}}
+                  </select><svg class="jss585 jss554" focusable="false" viewBox="0 0 24 24" aria-hidden="true"
+                    role="presentation">
+                    <path d="M7 10l5 5 5-5z"></path>
+                  </svg></div>
+              </div>
+              {{#if live}}
+              <div class="index__liveIcon___3ff0N" style="top:12px;">
+                <div class="index__root___2-25A">
+                  <div class="index__redCircle___1M9GK" style="background-color:#d71e02"></div>
+                  <div style="color:#d71e02">LIVE</div>
+                </div>
+              </div>
+              {{/if}}
+            </div>
+          </div>
+          <div style="display: inline-flex;">
+            {{#if nextMatchDay}}
+            <p><a href="/calendar/{{nextMatchDay}}"><i class="index__caret___2NU1N fa fa-caret-right"></i></a></p>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    {{#if live}}
+    <div class="index__liveIconMobile___1z-MV">
+      <div class="index__root___2-25A">
+        <div class="index__redCircle___1M9GK" style="background-color:#d71e02"></div>
+        <div style="color:#d71e02">LIVE</div>
+      </div>
+    </div>
+    {{/if}}
+    <div class="index__date___2Dom1">{{timestampToDate date}}</div>
+    <table class="index__root___3ZUww">
+      <tbody>
+        {{#each matches}}
+        <tr class="index__line___O3eij">
+          <td class="index__teamHome___2DC4P index__winner___36Y9Y">
+            <div class="index__name___1j5pK index__nameHome___1RXZB"><a class="index__teamLink___3Hzxt"><span
+                  class="index__jersey___Fq5o3">
+                  {{#if teamHome.targetMan}}
+                  <div class="index__targetHome___2s_NJ"><span class="index__root___2XTpz jss6"><svg width="112"
+                        height="112" viewBox="0 0 112 112">
+                        <defs>
+                          <circle id="target" cx="45" cy="45" r="45"></circle>
+                          <filter x="-17.8%" y="-15.6%" width="135.6%" height="135.6%" filterUnits="objectBoundingBox"
+                            id="target1">
+                            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1">
+                            </feMorphology>
+                            <feOffset dy="2" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+                            <feGaussianBlur stdDeviation="4" in="shadowOffsetOuter1" result="shadowBlurOuter1">
+                            </feGaussianBlur>
+                            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out"
+                              result="shadowBlurOuter1"></feComposite>
+                            <feColorMatrix values="0 0 0 0 1 0 0 0 0 0.17254902 0 0 0 0 0.282352941 0 0 0 0.298828125 0"
+                              in="shadowBlurOuter1"></feColorMatrix>
+                          </filter>
+                        </defs>
+                        <g fill="none" fill-rule="evenodd">
+                          <g transform="translate(10 8)" fill-rule="nonzero">
+                            <use fill="#000" filter="url(#target1)" xlink:href="#target"></use>
+                            <use fill-opacity=".88" fill="#FFF" xlink:href="#target"></use>
+                          </g>
+                          <path
+                            d="M57.542 74.652c-.572.066-1.143.11-1.729.125V62.535c4.893-.41 8.754-4.535 8.754-9.539 0-4.996-3.86-9.12-8.754-9.53V31.222c.586.015 1.157.06 1.729.125 10.006 1.165 17.947 9.106 19.111 19.106.096.835.147 1.685.147 2.542a20.9 20.9 0 0 1-.154 2.55c-1.157 10.007-9.098 17.941-19.104 19.106zm-1.729-29.546c3.992.403 7.128 3.788 7.128 7.89 0 4.11-3.136 7.495-7.128 7.898V45.106zm-1.633-1.64c-4.901.417-8.754 4.534-8.754 9.53 0 5.004 3.853 9.121 8.754 9.539v12.242a16.836 16.836 0 0 1-1.73-.132c-10.005-1.158-17.939-9.092-19.096-19.1a20.9 20.9 0 0 1-.154-2.549c0-.857.051-1.707.147-2.542 1.164-10 9.098-17.941 19.104-19.099a16.836 16.836 0 0 1 1.729-.132v12.242zm0 17.428c-3.993-.41-7.12-3.795-7.12-7.898 0-4.095 3.127-7.48 7.12-7.89v15.788zm33.27-10.44h-7.522C78.734 38.66 69.335 29.26 57.542 28.066v-7.524A2.539 2.539 0 0 0 55 18a2.545 2.545 0 0 0-2.55 2.542v7.524c-11.793 1.194-21.191 10.6-22.378 22.388h-7.53A2.548 2.548 0 0 0 20 52.996a2.55 2.55 0 0 0 2.542 2.55h7.53C31.26 67.333 40.657 76.74 52.451 77.934v7.524A2.545 2.545 0 0 0 55 88a2.539 2.539 0 0 0 2.542-2.542v-7.524c11.793-1.194 21.192-10.593 22.386-22.388h7.523A2.551 2.551 0 0 0 90 52.996a2.55 2.55 0 0 0-2.55-2.542z"
+                            fill="#FF2D48"></path>
+                        </g>
+                      </svg></span></div>
+                  {{/if}}
+                  <span><img class="index__jerseyImg___xMu7u" src="{{teamHome.jerseyUrl}}"></span>
+                </span><span class="index__teamLinkText___Ve-tv">{{teamHome.name}}</span></a>
+            </div>
+          </td>
+          <td class="index__score___3hXZ9"><a class="index__scoreLink___2rJFE" href="#">{{teamHome.score}} -
+              {{teamAway.score}}</a></td>
+          <td class="index__teamAway___1PBhh">
+            <div class="index__name___1j5pK index__nameAway___25WUV"><a class="index__teamLink___3Hzxt"><span
+                  class="index__jersey___Fq5o3">
+                  {{#if teamAway.targetMan}}
+                  <div class="index__targetHome___2s_NJ"><span class="index__root___2XTpz jss6"><svg width="112"
+                        height="112" viewBox="0 0 112 112">
+                        <defs>
+                          <circle id="target" cx="45" cy="45" r="45"></circle>
+                          <filter x="-17.8%" y="-15.6%" width="135.6%" height="135.6%" filterUnits="objectBoundingBox"
+                            id="target1">
+                            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1">
+                            </feMorphology>
+                            <feOffset dy="2" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+                            <feGaussianBlur stdDeviation="4" in="shadowOffsetOuter1" result="shadowBlurOuter1">
+                            </feGaussianBlur>
+                            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out"
+                              result="shadowBlurOuter1"></feComposite>
+                            <feColorMatrix values="0 0 0 0 1 0 0 0 0 0.17254902 0 0 0 0 0.282352941 0 0 0 0.298828125 0"
+                              in="shadowBlurOuter1"></feColorMatrix>
+                          </filter>
+                        </defs>
+                        <g fill="none" fill-rule="evenodd">
+                          <g transform="translate(10 8)" fill-rule="nonzero">
+                            <use fill="#000" filter="url(#target1)" xlink:href="#target"></use>
+                            <use fill-opacity=".88" fill="#FFF" xlink:href="#target"></use>
+                          </g>
+                          <path
+                            d="M57.542 74.652c-.572.066-1.143.11-1.729.125V62.535c4.893-.41 8.754-4.535 8.754-9.539 0-4.996-3.86-9.12-8.754-9.53V31.222c.586.015 1.157.06 1.729.125 10.006 1.165 17.947 9.106 19.111 19.106.096.835.147 1.685.147 2.542a20.9 20.9 0 0 1-.154 2.55c-1.157 10.007-9.098 17.941-19.104 19.106zm-1.729-29.546c3.992.403 7.128 3.788 7.128 7.89 0 4.11-3.136 7.495-7.128 7.898V45.106zm-1.633-1.64c-4.901.417-8.754 4.534-8.754 9.53 0 5.004 3.853 9.121 8.754 9.539v12.242a16.836 16.836 0 0 1-1.73-.132c-10.005-1.158-17.939-9.092-19.096-19.1a20.9 20.9 0 0 1-.154-2.549c0-.857.051-1.707.147-2.542 1.164-10 9.098-17.941 19.104-19.099a16.836 16.836 0 0 1 1.729-.132v12.242zm0 17.428c-3.993-.41-7.12-3.795-7.12-7.898 0-4.095 3.127-7.48 7.12-7.89v15.788zm33.27-10.44h-7.522C78.734 38.66 69.335 29.26 57.542 28.066v-7.524A2.539 2.539 0 0 0 55 18a2.545 2.545 0 0 0-2.55 2.542v7.524c-11.793 1.194-21.191 10.6-22.378 22.388h-7.53A2.548 2.548 0 0 0 20 52.996a2.55 2.55 0 0 0 2.542 2.55h7.53C31.26 67.333 40.657 76.74 52.451 77.934v7.524A2.545 2.545 0 0 0 55 88a2.539 2.539 0 0 0 2.542-2.542v-7.524c11.793-1.194 21.192-10.593 22.386-22.388h7.523A2.551 2.551 0 0 0 90 52.996a2.55 2.55 0 0 0-2.55-2.542z"
+                            fill="#FF2D48"></path>
+                        </g>
+                      </svg></span></div>
+                  {{/if}}
+                  <span><img class="index__jerseyImg___xMu7u" src="{{teamAway.jerseyUrl}}"></span>
+                </span><span class="index__teamLinkText___Ve-tv">{{teamAway.name}}</span></a></div>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<script>
+  const select = document.querySelector('#calendar-select');
+  select.addEventListener('change', (event) => {
+    window.location = `/calendar/${event.target.value}`;
+  });
+</script>
