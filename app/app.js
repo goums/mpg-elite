@@ -11,18 +11,15 @@ const debug = require("debug")("mpg:app");
 const exphbs = require("express-handlebars");
 const rankHelper = require("./helpers/rank");
 const rankingRouter = require("./routes/ranking");
+const calendarRouter = require("./routes/calendar");
 const app = express();
 
 //Setup favicon
 app.use(favicon(path.join(__dirname, "..", "public", "favicon.svg")));
 
-//Set pretty print json space
-app.set("json spaces", 2);
-
 //Include standard middlewares
 app.use(compression());
 app.use(logger("dev"));
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "..", "public"), { "Cache-Control": false }));
@@ -34,17 +31,29 @@ app.engine(
   exphbs({
     extname: ".hbs",
     helpers: {
+      eq: (a, b) => a === b,
+      timestampToDate: (t) => {
+        const date = new Date(t);
+        const d = date.getDate();
+        const m = date.getMonth() + 1;
+        const y = date.getUTCFullYear();
+        return `${d >= 10 ? d : "0" + d}/${m >= 10 ? m : "0" + m}/${y}`;
+      },
       ...rankHelper
     }
   })
 );
 app.set("view engine", ".hbs");
 
-//Let app know we are behind a proxy to retreive IP via X-Forwarded-For header
-app.enable("trust proxy");
+//Home internal redirect to /calendar
+app.get("/", (req, res, next) => {
+  req.url = "/calendar";
+  next();
+});
 
 //Mount routers
-app.use("/", rankingRouter);
+app.use("/calendar", calendarRouter);
+app.use("/ranking", rankingRouter);
 
 //Catch 404 and forward to error handler
 app.use((req, res, next) => {
