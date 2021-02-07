@@ -11,9 +11,12 @@ const _callApi = (endpoint, params) => {
     hostname: "api.monpetitgazon.com",
     path: `/league/${mpgLeagueCode}/${endpoint}`,
     headers: {
-      Authorization: mpgToken
+      Authorization: mpgToken,
+      platform: "web",
+      "client-version": "6.9.1"
     }
   };
+  debug("Calling api:", options.path);
   return new Promise((resolve, reject) => {
     https
       .get(options, (res) => {
@@ -87,4 +90,9 @@ module.exports.getCumulateRanking = (firstRanking, secondRanking) => {
     });
   });
   return cumulateRanking;
+};
+
+module.exports.getCalendar = async (day = null) => {
+  const data = await _callApi(`calendar/${day ?? ""}`);
+  return data.data.results;
 };
