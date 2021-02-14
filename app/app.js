@@ -12,6 +12,7 @@ const exphbs = require("express-handlebars");
 const rankHelper = require("./helpers/rank");
 const rankingRouter = require("./routes/ranking");
 const calendarRouter = require("./routes/calendar");
+const matchRouter = require("./routes/match");
 const app = express();
 
 //Setup favicon
@@ -32,6 +33,9 @@ app.engine(
     extname: ".hbs",
     helpers: {
       eq: (a, b) => a === b,
+      gt: (a, b) => a > b,
+      loop: (n) => Array(n).fill(true),
+      teamJersey: (team) => (team ? `graphics/teams/team-${team}` : "graphics/pitch-goal"),
       timestampToDate: (t) => {
         const date = new Date(t);
         const d = date.getDate();
@@ -53,6 +57,7 @@ app.get("/", (req, res, next) => {
 
 //Mount routers
 app.use("/calendar", calendarRouter);
+app.use("/match", matchRouter);
 app.use("/ranking", rankingRouter);
 
 //Catch 404 and forward to error handler
