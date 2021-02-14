@@ -62,7 +62,7 @@
       <tbody>
         {{#each matches}}
         <tr class="index__line___O3eij">
-          <td class="index__teamHome___2DC4P index__winner___36Y9Y">
+          <td class="index__teamHome___2DC4P {{#if (gt teamHome.score teamAway.score)}}index__winner___36Y9Y{{/if}}">
             <div class="index__name___1j5pK index__nameHome___1RXZB"><a class="index__teamLink___3Hzxt"><span
                   class="index__jersey___Fq5o3">
                   {{#if teamHome.targetMan}}
@@ -98,9 +98,10 @@
                 </span><span class="index__teamLinkText___Ve-tv">{{teamHome.name}}</span></a>
             </div>
           </td>
-          <td class="index__score___3hXZ9"><a class="index__scoreLink___2rJFE" href="#">{{teamHome.score}} -
+          <td class="index__score___3hXZ9"><a class="index__scoreLink___2rJFE"
+              href="{{#if ../live}}/match/live/{{id}}{{else}}/match/{{id}}{{/if}}">{{teamHome.score}} -
               {{teamAway.score}}</a></td>
-          <td class="index__teamAway___1PBhh">
+          <td class="index__teamAway___1PBhh {{#if (gt teamAway.score teamHome.score)}}index__winner___36Y9Y{{/if}}">
             <div class="index__name___1j5pK index__nameAway___25WUV"><a class="index__teamLink___3Hzxt"><span
                   class="index__jersey___Fq5o3">
                   {{#if teamAway.targetMan}}
