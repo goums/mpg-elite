@@ -6,10 +6,12 @@ const https = require("https");
 const mpgToken = process.env.MPG_TOKEN;
 const mpgLeagueCode = process.env.MPG_LEAGUE;
 
-const _callApi = (endpoint, params) => {
+const _leagueEndpoint = (endpoint) => `/league/${mpgLeagueCode}${endpoint}`;
+
+const _callApi = (endpoint) => {
   const options = {
     hostname: "api.monpetitgazon.com",
-    path: `/league/${mpgLeagueCode}/${endpoint}`,
+    path: endpoint,
     headers: {
       Authorization: mpgToken,
       platform: "web",
@@ -63,12 +65,12 @@ const _insertSorted = (array, row) => {
 };
 
 module.exports.getFirstPhaseRanking = async () => {
-  const data = await _callApi("ranking/winners");
+  const data = await _callApi(_leagueEndpoint("/ranking/winners"));
   return data.winners.shift().ranking.map((rank) => _createTeamRank(data.teams[rank.teamid], rank));
 };
 
 module.exports.getSecondPhaseRanking = async () => {
-  const data = await _callApi("ranking");
+  const data = await _callApi(_leagueEndpoint("/ranking"));
   return data.ranking.map((rank) => _createTeamRank(data.teams[rank.teamid], rank));
 };
 
@@ -93,6 +95,76 @@ module.exports.getCumulateRanking = (firstRanking, secondRanking) => {
 };
 
 module.exports.getCalendar = async (day = null) => {
-  const data = await _callApi(`calendar/${day ?? ""}`);
+  const data = await _callApi(_leagueEndpoint(`/calendar/${day ?? ""}`));
   return data.data.results;
+};
+
+const _addPlayer = (isLive, player, teamPlayers, teamSubstitutes, teamGoals, adversaryGoals) => {
+  if (!player.playerId && !player.id) return;
+
+  if (parseInt(player.number) <= 11) {
+    if (player.substitute) {
+      //replace player by its substitute for this position
+      player.substitute.number = player.number;
+      teamPlayers.push(player.substitute);
+    } else {
+      teamPlayers.push(player);
+    }
+  } else {
+    teamSubstitutes.push(player);
+    //ignore goals from substitue for live match
+    if (isLive) return;
+  }
+
+  //look for substituted player in case of non-live match
+  if (!isLive && player.substitute) player = player.substitute;
+
+  if (player.goals?.goal > 0) {
+    teamGoals.push({ type: "goal", p: player });
+  }
+  if (player.goals?.mpg > 0) {
+    teamGoals.push({ type: "mpg", p: player });
+  }
+  if (player.goals?.own_goal > 0) {
+    adversaryGoals.push({ type: "own", p: player });
+  }
+};
+
+module.exports.getMatch = async (matchId, isLive) => {
+  let data;
+  if (isLive) {
+    data = await _callApi(`/live/match/mpg_match_${mpgLeagueCode}_${matchId}`);
+  } else {
+    data = await _callApi(_leagueEndpoint(`/results/${matchId}`));
+    data = data.data;
+  }
+
+  data.teamHome.goals = [];
+  data.teamHome.players = [];
+  data.teamHome.substitutePlayers = [];
+  data.teamAway.goals = [];
+  data.teamAway.players = [];
+  data.teamAway.substitutePlayers = [];
+  data.players.home.forEach((player) => {
+    _addPlayer(
+      isLive,
+      player,
+      data.teamHome.players,
+      data.teamHome.substitutePlayers,
+      data.teamHome.goals,
+      data.teamAway.goals
+    );
+  });
+  data.players.away.forEach((player) => {
+    _addPlayer(
+      isLive,
+      player,
+      data.teamAway.players,
+      data.teamAway.substitutePlayers,
+      data.teamAway.goals,
+      data.teamHome.goals
+    );
+  });
+
+  return data;
 };
