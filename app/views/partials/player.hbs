@@ -1,0 +1,45 @@
+{{#if (gt 12 number)}}
+<li class="player {{#if (eq definitiveRating false)}}{{#if rating}}index__liveRating___3fl2_{{/if}}{{/if}}"
+  data-position="{{number}}">
+  {{else}}
+  <span
+    class="index__substitute___H6R8K {{#if (eq definitiveRating false)}}{{#if rating}}index__liveRating___3fl2_{{/if}}{{/if}}"
+    data-position="{{number}}">
+    {{/if}}
+
+    <span class="team-graphic" role="figure">
+      <span class="graphic-overlay graphic-tooltip" data-tippy="" data-original-title="{{name}}">
+        {{> (teamJersey teamid) }}
+        <span class="goals">
+          {{#if goals}}
+          {{#each (loop goals.goal)}}
+          <span class="index__ball___39Bld index__root___2XTpz jss6 goal">{{> graphics/goal}}</span>
+          {{/each}}
+          {{/if}}
+        </span>
+        <span class="status {{#if rating}}rate{{/if}}">
+          {{#if rating}}
+          {{rating}}
+          {{else}}
+          {{#if (eq starter 2)}}
+          <span class="index__holder___3xsXV index__sub___2EbIE"><i class="fa fa-street-view"></i></span>
+          {{else}}
+          {{#if (eq starter 1)}}
+          <span class="index__holder___3xsXV"><i class="fa fa-street-view"></i></span>
+          {{else}}
+          {{#if (eq starter -1)}}
+          <span class="index__holder___3xsXV index__notHolder___3BT_J"><i class="fa fa-street-view"></i></span>
+          {{/if}}
+          {{/if}}
+          {{/if}}
+          {{/if}}
+        </span>
+      </span>
+      <span class="label">{{name}}</span>
+    </span>
+
+    {{#if (gt 12 number)}}
+</li>
+{{else}}
+</span>
+{{/if}}
