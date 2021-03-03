@@ -100,7 +100,16 @@
                           graphics/goal}}</span>
                       </div>
                       {{/if}}
-                    </div><span class="index__scorer___1gWL9">{{p.name}}</span>
+                      {{#if (eq type "own")}}
+                      <div class="index__root___1YYwH index__goal___3wV0W">
+                        {{#each (loop p.goals.own)}}<span
+                          class="index__ball___39Bld index__csc___3wT7u index__root___2XTpz jss6">{{>
+                          graphics/goal}}</span>{{/each}}
+                      </div>
+                      {{/if}}
+                    </div><span class="index__scorer___1gWL9">
+                      {{p.name}} {{#if (eq type "own")}}(csc){{/if}}
+                    </span>
                   </div>
                   {{#if (eq type "csc")}}
                   {{/if}}
@@ -123,7 +132,15 @@
                           </svg></span>
                       </div>
                       {{/if}}
-                    </div><span class="index__scorer___1gWL9">{{p.name}}</span>
+                      {{#if (eq type "own")}}
+                      <div class="index__root___1YYwH index__goal___3wV0W">
+                        {{#each (loop p.goals.own)}}<span
+                          class="index__ball___39Bld index__csc___3wT7u index__root___2XTpz jss6">{{>
+                          graphics/goal}}</span>{{/each}}
+                      </div>
+                      {{/if}}
+                    </div><span class="index__scorer___1gWL9">
+                      {{p.name}} {{#if (eq type "own")}}(csc){{/if}}</span>
                   </div>
                   {{#if (eq type "csc")}}
                   {{/if}}

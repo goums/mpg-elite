@@ -19,6 +19,11 @@
           <span class="index__ball___39Bld index__mpg___uUgmt index__root___2XTpz jss6 goal">{{>
             graphics/goal}}</span>
           {{/if}}
+          {{#if goals.own_goal}}
+          {{#each (loop goals.own_goal)}}
+          <span class="index__ball___39Bld index__csc___3wT7u index__root___2XTpz jss6 goal">{{>graphics/goal}}</span>
+          {{/each}}
+          {{/if}}
           {{/if}}
         </span>
         <span class="status {{#if rating}}rate{{/if}}">
