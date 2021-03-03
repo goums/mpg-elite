@@ -86,67 +86,14 @@
                     class="index__root___1mxjA index__span___2ImFl jss239 index__uppercase___3C7cm">Buteurs</span></div>
                 <div class="index__scorersHome___1a6V9">
                   {{#each teamHome.goals}}
-                  <div>
-                    <div class="index__root___35Ve6">
-                      {{#if (eq type "goal")}}
-                      <div class="index__root___1YYwH index__goal___21tBi">
-                        {{#each (loop p.goals.goal)}}<span class="index__ball___39Bld index__root___2XTpz jss6">{{>
-                          graphics/goal}}</span>{{/each}}
-                      </div>
-                      {{/if}}
-                      {{#if (eq type "mpg")}}
-                      <div class="index__root___1YYwH index__goalMPG___tv1Ay">
-                        <span class="index__ball___39Bld index__mpg___uUgmt index__root___2XTpz jss6">{{>
-                          graphics/goal}}</span>
-                      </div>
-                      {{/if}}
-                      {{#if (eq type "own")}}
-                      <div class="index__root___1YYwH index__goal___3wV0W">
-                        {{#each (loop p.goals.own)}}<span
-                          class="index__ball___39Bld index__csc___3wT7u index__root___2XTpz jss6">{{>
-                          graphics/goal}}</span>{{/each}}
-                      </div>
-                      {{/if}}
-                    </div><span class="index__scorer___1gWL9">
-                      {{p.name}} {{#if (eq type "own")}}(csc){{/if}}
-                    </span>
-                  </div>
-                  {{#if (eq type "csc")}}
-                  {{/if}}
+                  {{> scorer}}
                   {{/each}}
                 </div>
                 <div class="index__scorersAway___TQBET">
                   {{#each teamAway.goals}}
-                  <div>
-                    <div class="index__root___35Ve6">
-                      {{#if (eq type "goal")}}
-                      <div class="index__root___1YYwH index__goal___21tBi">
-                        {{#each (loop p.goals.goal)}}<span class="index__ball___39Bld index__root___2XTpz jss6">{{>
-                          graphics/goal}}</span>{{/each}}
-                      </div>
-                      {{/if}}
-                      {{#if (eq type "mpg")}}
-                      <div class="index__root___1YYwH index__goalMPG___tv1Ay">
-                        <span class="index__ball___39Bld index__mpg___uUgmt index__root___2XTpz jss6">{{>
-                          graphics/goal}}</path>
-                          </svg></span>
-                      </div>
-                      {{/if}}
-                      {{#if (eq type "own")}}
-                      <div class="index__root___1YYwH index__goal___3wV0W">
-                        {{#each (loop p.goals.own)}}<span
-                          class="index__ball___39Bld index__csc___3wT7u index__root___2XTpz jss6">{{>
-                          graphics/goal}}</span>{{/each}}
-                      </div>
-                      {{/if}}
-                    </div><span class="index__scorer___1gWL9">
-                      {{p.name}} {{#if (eq type "own")}}(csc){{/if}}</span>
-                  </div>
-                  {{#if (eq type "csc")}}
-                  {{/if}}
+                  {{> scorer}}
                   {{/each}}
                 </div>
-                <div class="index__liveOptions___V48qE"></div>
               </div>
               <div class="">
                 <div class="index__pitchHorizontal___2r7RZ" style="font-size: 0;">
