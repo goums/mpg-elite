@@ -98,9 +98,15 @@
                 </span><span class="index__teamLinkText___Ve-tv">{{teamHome.name}}</span></a>
             </div>
           </td>
-          <td class="index__score___3hXZ9"><a class="index__scoreLink___2rJFE"
+          <td class="index__score___3hXZ9">
+            {{#if teamHome.score}}
+            <a class="index__scoreLink___2rJFE"
               href="{{#if ../live}}/match/live/{{id}}{{else}}/match/{{id}}{{/if}}">{{teamHome.score}} -
-              {{teamAway.score}}</a></td>
+              {{teamAway.score}}</a>
+            {{else}}
+            -
+            {{/if}}
+          </td>
           <td class="index__teamAway___1PBhh {{#if (gt teamAway.score teamHome.score)}}index__winner___36Y9Y{{/if}}">
             <div class="index__name___1j5pK index__nameAway___25WUV"><a class="index__teamLink___3Hzxt"><span
                   class="index__jersey___Fq5o3">
@@ -134,7 +140,25 @@
                       </svg></span></div>
                   {{/if}}
                   <span><img class="index__jerseyImg___xMu7u" src="{{teamAway.jerseyUrl}}"></span>
-                </span><span class="index__teamLinkText___Ve-tv">{{teamAway.name}}</span></a></div>
+                </span><span class="index__teamLinkText___Ve-tv">{{teamAway.name}}</span></a>
+            </div>
+          </td>
+        </tr>
+        <tr class="scorers-line">
+          <td class="index__teamHome___2DC4P">
+            <div class="team-home-scorers">
+              {{#each teamHome.goals}}
+              {{> scorer}}
+              {{/each}}
+            </div>
+          </td>
+          <td class="index__score___3hXZ9"></td>
+          <td class="index__teamAway___1PBhh">
+            <div class="team-away-scorers">
+              {{#each teamAway.goals}}
+              {{> scorer}}
+              {{/each}}
+            </div>
           </td>
         </tr>
         {{/each}}

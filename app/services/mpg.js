@@ -95,8 +95,16 @@ module.exports.getCumulateRanking = (firstRanking, secondRanking) => {
 };
 
 module.exports.getCalendar = async (day = null) => {
-  const data = await _callApi(_leagueEndpoint(`/calendar/${day ?? ""}`));
-  return data.data.results;
+  const { data } = await _callApi(_leagueEndpoint(`/calendar/${day ?? ""}`));
+
+  //retrieve full match details
+  if (data.results.live || data.results.date < new Date().getTime()) {
+    data.results.matches = await Promise.all(
+      data.results.matches.map(async (match) => getMatch(match.id, data.results.live))
+    );
+  }
+
+  return data.results;
 };
 
 const _addPlayer = (isLive, player, teamPlayers, teamSubstitutes, teamGoals, adversaryGoals) => {
@@ -130,7 +138,7 @@ const _addPlayer = (isLive, player, teamPlayers, teamSubstitutes, teamGoals, adv
   }
 };
 
-module.exports.getMatch = async (matchId, isLive) => {
+const getMatch = async (matchId, isLive) => {
   let data;
   if (isLive) {
     data = await _callApi(`/live/match/mpg_match_${mpgLeagueCode}_${matchId}`);
@@ -138,7 +146,7 @@ module.exports.getMatch = async (matchId, isLive) => {
     data = await _callApi(_leagueEndpoint(`/results/${matchId}`));
     data = data.data;
   }
-
+  data.id = matchId;
   data.teamHome.goals = [];
   data.teamHome.players = [];
   data.teamHome.substitutePlayers = [];
@@ -168,3 +176,4 @@ module.exports.getMatch = async (matchId, isLive) => {
 
   return data;
 };
+module.exports.getMatch = getMatch;
