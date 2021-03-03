@@ -88,19 +88,18 @@
                   {{#each teamHome.goals}}
                   <div>
                     <div class="index__root___35Ve6">
+                      {{#if (eq type "goal")}}
                       <div class="index__root___1YYwH index__goal___21tBi">
-                        {{#if (eq type "goal")}}
-                        {{#each (loop p.goals.goal)}}
-                        <span class="index__ball___39Bld index__root___2XTpz jss6">{{> graphics/goal}}</span>
-                        {{/each}}
-                        {{/if}}
+                        {{#each (loop p.goals.goal)}}<span class="index__ball___39Bld index__root___2XTpz jss6">{{>
+                          graphics/goal}}</span>{{/each}}
                       </div>
+                      {{/if}}
+                      {{#if (eq type "mpg")}}
                       <div class="index__root___1YYwH index__goalMPG___tv1Ay">
-                        {{#if (eq type "mpg")}}
                         <span class="index__ball___39Bld index__mpg___uUgmt index__root___2XTpz jss6">{{>
                           graphics/goal}}</span>
-                        {{/if}}
                       </div>
+                      {{/if}}
                     </div><span class="index__scorer___1gWL9">{{p.name}}</span>
                   </div>
                   {{#if (eq type "csc")}}
@@ -111,20 +110,19 @@
                   {{#each teamAway.goals}}
                   <div>
                     <div class="index__root___35Ve6">
+                      {{#if (eq type "goal")}}
                       <div class="index__root___1YYwH index__goal___21tBi">
-                        {{#if (eq type "goal")}}
-                        {{#each (loop p.goals.goal)}}
-                        <span class="index__ball___39Bld index__root___2XTpz jss6">{{> graphics/goal}}</span>
-                        {{/each}}
-                        {{/if}}
+                        {{#each (loop p.goals.goal)}}<span class="index__ball___39Bld index__root___2XTpz jss6">{{>
+                          graphics/goal}}</span>{{/each}}
                       </div>
+                      {{/if}}
+                      {{#if (eq type "mpg")}}
                       <div class="index__root___1YYwH index__goalMPG___tv1Ay">
-                        {{#if (eq type "mpg")}}
                         <span class="index__ball___39Bld index__mpg___uUgmt index__root___2XTpz jss6">{{>
                           graphics/goal}}</path>
                           </svg></span>
-                        {{/if}}
                       </div>
+                      {{/if}}
                     </div><span class="index__scorer___1gWL9">{{p.name}}</span>
                   </div>
                   {{#if (eq type "csc")}}
