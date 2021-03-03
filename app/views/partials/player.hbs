@@ -15,11 +15,21 @@
           {{#each (loop goals.goal)}}
           <span class="index__ball___39Bld index__root___2XTpz jss6 goal">{{> graphics/goal}}</span>
           {{/each}}
+          {{#if goals.mpg}}
+          <span class="index__ball___39Bld index__mpg___uUgmt index__root___2XTpz jss6 goal">{{>
+            graphics/goal}}</span>
+          {{/if}}
           {{/if}}
         </span>
         <span class="status {{#if rating}}rate{{/if}}">
           {{#if rating}}
           {{rating}}
+          {{#if bonus}}
+          <span class="rate"
+            style="top: 1px;right: -15px;width: 14px;height: 12px;line-height: 13px;padding: 0 1px 0px 0;border-radius: 0;border-left: 0;font-size: 9px;border-top-right-radius: 5px;border-bottom-right-radius: 5px;">
+            +{{#if (eq bonus 0.5)}}.5{{else}}{{bonus}}{{/if}}
+          </span>
+          {{/if}}
           {{else}}
           {{#if (eq starter 2)}}
           <span class="index__holder___3xsXV index__sub___2EbIE"><i class="fa fa-street-view"></i></span>
