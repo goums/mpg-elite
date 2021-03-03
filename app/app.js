@@ -35,7 +35,7 @@ app.engine(
       eq: (a, b) => a === b,
       gt: (a, b) => a > b,
       loop: (n) => Array(n).fill(true),
-      teamJersey: (team) => (team ? `graphics/teams/team-${team}` : "graphics/pitch-goal"),
+      teamJersey: (team) => (team ? `graphics/teams/team-${team}` : "graphics/teams/team-rotaldo"),
       timestampToDate: (t) => {
         const date = new Date(t);
         const d = date.getDate();
