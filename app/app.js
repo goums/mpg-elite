@@ -34,6 +34,7 @@ app.engine(
     helpers: {
       eq: (a, b) => a === b,
       gt: (a, b) => a > b,
+      isInt: (a) => Number.isInteger(a),
       loop: (n) => Array(n).fill(true),
       teamJersey: (team) => (team ? `graphics/teams/team-${team}` : "graphics/teams/team-rotaldo"),
       timestampToDate: (t) => {
