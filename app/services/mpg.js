@@ -2,6 +2,7 @@
 
 const debug = require("debug")("mpg:api");
 const https = require("https");
+const { isNumber } = require("util");
 
 const mpgToken = process.env.MPG_TOKEN;
 const mpgLeagueCode = process.env.MPG_LEAGUE;
@@ -107,8 +108,11 @@ module.exports.getCalendar = async (day = null) => {
   return data.results;
 };
 
-const _addPlayer = (isLive, player, teamPlayers, teamSubstitutes, teamGoals, adversaryGoals) => {
+const _addPlayer = (player, defBonus, teamPlayers, teamSubstitutes) => {
   if (!player.playerId && !player.id) return;
+
+  //add defBonus for starting player
+  if (player.position === 2 && defBonus && parseInt(player.number) <= 11) player.bonus = defBonus;
 
   if (parseInt(player.number) <= 11) {
     if (player.substitute) {
@@ -121,58 +125,250 @@ const _addPlayer = (isLive, player, teamPlayers, teamSubstitutes, teamGoals, adv
   } else {
     teamSubstitutes.push(player);
     //ignore goals from substitue for live match
-    if (isLive) return;
   }
+};
 
-  //look for substituted player in case of non-live match
-  if (!isLive && player.substitute) player = player.substitute;
+const _addPlayerGoals = (player, teamGoals, adversaryGoals) => {
+  if (!player.playerId && !player.id) return;
+  if (parseInt(player.number) > 11) return;
 
+  //look for substituted player
+  if (player.virtualSubstitute) {
+    addGoals(player, teamGoals, adversaryGoals, "out");
+    addGoals(player.virtualSubstitute, teamGoals, adversaryGoals, "in");
+  } else {
+    addGoals(player, teamGoals, adversaryGoals, "start");
+  }
+};
+
+const addGoals = (player, teamGoals, adversaryGoals, compo) => {
   if (player.goals?.goal > 0) {
-    teamGoals.push({ type: "goal", p: player });
+    teamGoals.push({ type: "goal", p: player, compo });
   }
   if (player.goals?.mpg > 0) {
-    teamGoals.push({ type: "mpg", p: player });
+    teamGoals.push({ type: "mpg", p: player, compo });
   }
   if (player.goals?.own_goal > 0) {
-    adversaryGoals.push({ type: "own", p: player });
+    adversaryGoals.push({ type: "own", p: player, compo });
   }
+};
+
+const defBonus = (composition) => {
+  if (composition > 500) return 1;
+  if (composition > 400) return 0.5;
+  return 0;
+};
+
+const calculateVirtualPlayers = (players, substitutes, defBonus) => {
+  substitutes.forEach((s) => {
+    s.subPlayer = players.find((p) => p.playerId === s.subs);
+  });
+  let availableSubstitutes = players.filter((p) => parseInt(p.number) > 11 && p.position > 1);
+
+  players.forEach((p) => {
+    //set default rating and bonus if missing
+    const isRotaldo = p.starter === -1 || (p.starter === 2 && !p.rating);
+    if (isRotaldo) console.log(`ROTALDO => ${p.name}`);
+    p.virtualRating = isRotaldo ? 2.5 : p.rating ?? 5;
+    p.virtualBonus = p.bonus ?? (!isRotaldo && p.position === 2 && defBonus && parseInt(p.number) <= 11 ? defBonus : 0);
+
+    //check tactical substitute
+    const subTact = substitutes.find((s) => s.start === p.playerId);
+    //console.log(subTact);
+    if (subTact && p.virtualRating + p.virtualBonus < subTact.rating) {
+      if (subTact.subPlayer && subTact.subPlayer.rating) {
+        p.virtualSubstitute = subTact.subPlayer;
+        //remove substitute from available ones
+        availableSubstitutes = availableSubstitutes.filter((s) => s.playerId !== subTact.subs);
+      }
+    }
+
+    //check keeper auto substitute
+    if (isRotaldo && p.position === 1 && parseInt(p.number) <= 11) {
+      const sub = players.find((s) => s.position === 1 && s.playerId !== p.playerId);
+      if (sub && sub.rating) {
+        console.log(`GOAL SUBSTITUE: ${sub.name} replace ${p.name}`);
+        p.virtualSubstitute = sub;
+      }
+    }
+  });
+
+  //check default substitute
+  console.log("original substitutes:", substitutes.map((s) => s.substituteName).join(","));
+  console.log("available substitutes:", availableSubstitutes.map((s) => s.name).join(","));
+
+  const notPlayed = players.filter(
+    (p) => (p.starter === -1 || (p.starter === 2 && !p.rating)) && parseInt(p.number) <= 11 && !p.virtualSubstitute
+  );
+  console.log("rotaldo??", notPlayed.map((s) => s.name).join(","));
+  if (notPlayed.length > 0) {
+  }
+  notPlayed.forEach((p) => {
+    let subFound = false;
+    let checkingPos = p.position;
+    do {
+      let i = 0;
+      while (!subFound && i < availableSubstitutes.length) {
+        const subPlayer = availableSubstitutes[i];
+        if (subPlayer.rating && subPlayer.position === checkingPos) {
+          subPlayer.rating = subPlayer.rating - (p.position - subPlayer.position);
+          console.log(`Substitution: ${subPlayer.name} replace ${p.name} with rating ${subPlayer.rating}`);
+          p.virtualSubstitute = subPlayer;
+          //remove substitute from available ones
+          availableSubstitutes = availableSubstitutes.filter((s) => s.playerId !== subPlayer.playerId);
+          subFound = true;
+        }
+        i++;
+      }
+      checkingPos--;
+    } while (!subFound && checkingPos >= 1);
+  });
+};
+
+const calculateMpgGoals = (homePlayers, awayPlayers) => {
+  //calculate line average score
+  const homeScores = {
+    keeper: calculateLineScore(homePlayers.filter((p) => p.position === 1 && parseInt(p.number) <= 11)),
+    def: calculateLineScore(homePlayers.filter((p) => p.position === 2 && parseInt(p.number) <= 11)),
+    middle: calculateLineScore(homePlayers.filter((p) => p.position === 3 && parseInt(p.number) <= 11)),
+    forward: calculateLineScore(homePlayers.filter((p) => p.position === 4 && parseInt(p.number) <= 11))
+  };
+  console.log("homeScores", homeScores);
+
+  const awayScores = {
+    keeper: calculateLineScore(awayPlayers.filter((p) => p.position === 1 && parseInt(p.number) <= 11)),
+    def: calculateLineScore(awayPlayers.filter((p) => p.position === 2 && parseInt(p.number) <= 11)),
+    middle: calculateLineScore(awayPlayers.filter((p) => p.position === 3 && parseInt(p.number) <= 11)),
+    forward: calculateLineScore(awayPlayers.filter((p) => p.position === 4 && parseInt(p.number) <= 11))
+  };
+
+  console.log("awayScores", awayScores);
+
+  //calculate MPG goals...
+  homePlayers
+    .filter((p) => p.position > 1 && parseInt(p.number) <= 11 && p.goals?.goal === 0)
+    .forEach((p) => {
+      calculatePlayerMpgGoal(p, p.virtualRating + p.virtualBonus + 0.01, awayScores);
+      if (p.virtualSubstitute && p.virtualSubstitute.goals?.goal === 0) {
+        p = p.virtualSubstitute;
+        calculatePlayerMpgGoal(p, p.virtualRating + p.virtualBonus + 0.01, awayScores);
+      }
+    });
+
+  awayPlayers
+    .filter((p) => p.position > 1 && parseInt(p.number) <= 11 && p.goals?.goal === 0)
+    .forEach((p) => {
+      calculatePlayerMpgGoal(p, p.virtualRating + p.virtualBonus, homeScores);
+      if (p.virtualSubstitute && p.virtualSubstitute.goals?.goal === 0) {
+        p = p.virtualSubstitute;
+        calculatePlayerMpgGoal(p, p.virtualRating + p.virtualBonus, homeScores);
+      }
+    });
+};
+
+const calculatePlayerMpgGoal = (p, score, adversaryScores) => {
+  let pos = p.position;
+  let steps = 0;
+
+  if (pos === 2 && score > adversaryScores.forward) {
+    steps++;
+    pos++;
+    score = score - (steps === 1 ? 1 : 0.5);
+  }
+
+  if (pos === 3 && score > adversaryScores.middle) {
+    steps++;
+    pos++;
+    score = score - (steps === 1 ? 1 : 0.5);
+  }
+
+  if (pos === 4 && score > adversaryScores.def) {
+    steps++;
+    pos++;
+    score = score - (steps === 1 ? 1 : 0.5);
+  }
+
+  if (pos === 5 && score > adversaryScores.keeper) {
+    console.log("MPG GOAL", p.name, p.score, score, adversaryScores);
+    p.goals.mpg = 1;
+  }
+};
+
+const calculateLineScore = (players) => {
+  return (
+    players
+      .map((p) => {
+        if (p.virtualSubstitute) {
+          return p.virtualSubstitute.virtualRating + p.virtualSubstitute.virtualBonus;
+        }
+        return p.virtualRating + p.virtualBonus;
+      })
+      .reduce((score, total) => score + total, 0) / players.length
+  );
+};
+
+const calculateVirtualScore = (goals) => {
+  let score = 0;
+  goals.forEach((goal) => {
+    if (goal.compo === "out") return;
+    if (goal.type === "goal") {
+      score += goal.p.goals.goal;
+    }
+    if (goal.type === "mpg") {
+      score++;
+    }
+    if (goal.type === "own") {
+      score += goal.p.goals.own_goal;
+    }
+  });
+  return score;
 };
 
 const getMatch = async (matchId, isLive) => {
   let data;
+  let dataLive;
+
   if (isLive) {
-    data = await _callApi(`/live/match/mpg_match_${mpgLeagueCode}_${matchId}`);
+    dataLive = await _callApi(`/live/match/mpg_match_${mpgLeagueCode}_${matchId}`);
+    data = dataLive;
   } else {
-    data = await _callApi(_leagueEndpoint(`/results/${matchId}`));
+    try {
+      dataLive = await _callApi(`/live/match/mpg_match_${mpgLeagueCode}_${matchId}`);
+      data = await _callApi(_leagueEndpoint(`/results/${matchId}`));
+    } catch (err) {
+      console.log(err);
+    }
     data = data.data;
   }
   data.id = matchId;
   data.teamHome.goals = [];
   data.teamHome.players = [];
   data.teamHome.substitutePlayers = [];
+  data.teamHome.defBonus = defBonus(data.teamHome.composition);
   data.teamAway.goals = [];
   data.teamAway.players = [];
   data.teamAway.substitutePlayers = [];
+  data.teamAway.defBonus = defBonus(data.teamAway.composition);
+  calculateVirtualPlayers(dataLive.players.home, dataLive.teamHome.substitutes, data.teamHome.defBonus);
+  calculateVirtualPlayers(dataLive.players.away, dataLive.teamAway.substitutes, data.teamAway.defBonus);
+  calculateMpgGoals(dataLive.players.home, dataLive.players.away);
   data.players.home.forEach((player) => {
-    _addPlayer(
-      isLive,
-      player,
-      data.teamHome.players,
-      data.teamHome.substitutePlayers,
-      data.teamHome.goals,
-      data.teamAway.goals
-    );
+    _addPlayer(player, data.teamHome.defBonus, data.teamHome.players, data.teamHome.substitutePlayers);
+  });
+  dataLive.players.home.forEach((player) => {
+    _addPlayerGoals(player, data.teamHome.goals, data.teamAway.goals);
   });
   data.players.away.forEach((player) => {
-    _addPlayer(
-      isLive,
-      player,
-      data.teamAway.players,
-      data.teamAway.substitutePlayers,
-      data.teamAway.goals,
-      data.teamHome.goals
-    );
+    _addPlayer(player, data.teamAway.defBonus, data.teamAway.players, data.teamAway.substitutePlayers);
   });
+  dataLive.players.away.forEach((player) => {
+    _addPlayerGoals(player, data.teamAway.goals, data.teamHome.goals);
+  });
+
+  if (isLive && typeof data.teamHome.score === "number") {
+    data.teamHome.score = calculateVirtualScore(data.teamHome.goals);
+    data.teamAway.score = calculateVirtualScore(data.teamAway.goals);
+  }
 
   return data;
 };

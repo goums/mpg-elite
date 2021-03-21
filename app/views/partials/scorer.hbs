@@ -19,6 +19,9 @@
         graphics/goal}}</span>{{/each}}
     </div>
     {{/if}}
-  </div><span class="index__scorer___1gWL9">
+  </div>{{#if (eq compo "in")}}{{>graphics/player-in}}{{/if}}{{#if (eq compo
+  "out")}}{{>graphics/player-out}}{{/if}}<span class="index__scorer___1gWL9" {{#if (eq compo "out"
+    )}}style="text-decoration:line-through" {{/if}}>
+
     {{p.name}} {{#if (eq type "own")}}(csc){{/if}}</span>
 </div>
