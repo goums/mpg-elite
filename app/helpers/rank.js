@@ -12,9 +12,9 @@ const rankColor = [
 ];
 
 const seriesClasses = {
-  v: "index__v___30agd",
-  d: "index__d___1IAAG",
-  n: "index__n___2H3lP"
+  w: "index__v___30agd",
+  l: "index__d___1IAAG",
+  d: "index__n___2H3lP"
 };
 
 module.exports.indexToRank = (index) => index + 1;
