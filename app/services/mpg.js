@@ -72,26 +72,35 @@ const _insertSorted = (array, row) => {
 };
 
 const _getSeasonRanking = async (season) => {
-  const [divisionData, teamsData, rankingData] = await Promise.all([
+  const [divisionData, teamsData, rankingData, calendarData] = await Promise.all([
     _callApi(_divisionEndpoint("", mpgLeague, season)),
     _callApi(_divisionEndpoint("/teams", mpgLeague, season)),
-    _callApi(_divisionEndpoint("/ranking/standings", mpgLeague, season))
+    _callApi(_divisionEndpoint("/ranking/standings", mpgLeague, season)),
+    _callApi(_divisionEndpoint("/calendar", mpgLeague, season))
   ]);
+
+  let targetMan = 0;
+  calendarData.fixtures.forEach((f) => {
+    if (f.previousTargetMan) targetMan = f.previousTargetMan;
+    if (f.afterTargetMan) targetMan = f.afterTargetMan;
+  });
+  console.log("targetMan", targetMan);
 
   const users = {};
   Object.keys(divisionData.usersTeams).forEach((k) => (users[divisionData.usersTeams[k]] = k));
   if (rankingData?.standings) {
-    return rankingData.standings.map((rank) =>
-      _createTeamRank(
+    return rankingData.standings.map((rank) => {
+      rank.targetMan = rank.teamId === targetMan;
+      return _createTeamRank(
         teamsData.find((t) => t.id === rank.teamId),
         users[rank.teamId],
         rank
-      )
-    );
+      );
+    });
   } else {
     return teamsData.map((team) =>
       _createTeamRank(team, users[team.id], {
-        targetMan: false,
+        targetMan: team.id === targetMan,
         points: 0,
         played: 0,
         won: 0,
@@ -136,21 +145,58 @@ module.exports.getCumulateRanking = (firstRanking, secondRanking) => {
 };
 
 module.exports.getCalendar = async (day = null) => {
-  if (!day) {
-    const divisionData = await _callApi(_divisionEndpoint());
-    day = divisionData.liveState.currentGameWeek;
-  }
+  const divisionData = await _callApi(_divisionEndpoint());
+  if (!day) day = divisionData.liveState.currentGameWeek;
+  day = parseInt(day);
 
-  const data = await _callApi(_divisionEndpoint(`/game-week/${day}/matches`));
+  // currentMatchDay, maxMatchDay, date, live, matches
+
+  const { divisionMatches } = await _callApi(_divisionEndpoint(`/game-week/${day}/matches`));
+  const chId = divisionMatches[0].championshipId;
+  const chSeason = divisionMatches[0].championshipSeason;
+  const chWeek = divisionMatches[0].championshipGameWeekNumber;
+
+  const [chData, calendarData, teamsData] = await Promise.all([
+    _callApi(`/championship-matches/${chId}/season/${chSeason}/game-week/${chWeek}`),
+    _callApi(_divisionEndpoint("/calendar")),
+    _callApi(_divisionEndpoint("/teams"))
+  ]);
+
+  const matches = divisionMatches.map((match) => {
+    const teamHome = teamsData.find((t) => t.id === match.home.teamId);
+    match.teamHome = {
+      ...match.home,
+      ...teamHome,
+      targetMan: calendarData.fixtures[day - 1].previousTargetMan === teamHome.id
+    };
+
+    const teamAway = teamsData.find((t) => t.id === match.away.teamId);
+    match.teamAway = {
+      ...match.away,
+      ...teamAway,
+      targetMan: calendarData.fixtures[day - 1].previousTargetMan === teamAway.id
+    };
+    return match;
+  });
+  //console.dir(matches, { maxDepth: 10 });
+
+  const results = {
+    currentMatchDay: day,
+    maxMatchDay: divisionData.liveState.totalGameWeeks,
+    date: chData.matches[0].date,
+    live: false,
+    matches
+  };
+  //console.log(results);
 
   //retrieve full match details
-  if (data.results && (data.results.live || data.results.date < new Date().getTime())) {
+  /*if (data.results && (data.results.live || data.results.date < new Date().getTime())) {
     data.results.matches = await Promise.all(
       data.results.matches.map(async (match) => getMatch(match.id, data.results.live))
     );
-  }
+  }*/
 
-  return data.divisionMatches;
+  return results;
 };
 
 const _addPlayer = (player, defBonus, teamPlayers, teamSubstitutes) => {
