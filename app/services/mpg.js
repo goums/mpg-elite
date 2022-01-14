@@ -93,13 +93,31 @@ module.exports.getSecondPhaseRanking = async () => {
   Object.keys(usersTeams).forEach((k) => (users[usersTeams[k]] = k));
   const teams = await _callApi(_divisionEndpoint("/teams"));
   const data = await _callApi(_divisionEndpoint("/ranking/standings"));
-  return data.standings.map((rank) =>
-    _createTeamRank(
-      teams.find((t) => t.id === rank.teamId),
-      users[rank.teamId],
-      rank
-    )
-  );
+  console.log(data);
+  if (data?.standings) {
+    return data.standings.map((rank) =>
+      _createTeamRank(
+        teams.find((t) => t.id === rank.teamId),
+        users[rank.teamId],
+        rank
+      )
+    );
+  } else {
+    return teams.map((team) =>
+      _createTeamRank(team, users[team.id], {
+        targetMan: false,
+        points: 0,
+        played: 0,
+        won: 0,
+        lost: 0,
+        drawn: 0,
+        goals: 0,
+        goalsConceded: 0,
+        difference: 0,
+        series: ""
+      })
+    );
+  }
 };
 
 module.exports.getCumulateRanking = (firstRanking, secondRanking) => {
