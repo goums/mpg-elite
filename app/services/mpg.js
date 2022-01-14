@@ -93,7 +93,6 @@ module.exports.getSecondPhaseRanking = async () => {
   Object.keys(usersTeams).forEach((k) => (users[usersTeams[k]] = k));
   const teams = await _callApi(_divisionEndpoint("/teams"));
   const data = await _callApi(_divisionEndpoint("/ranking/standings"));
-  console.log(data);
   if (data?.standings) {
     return data.standings.map((rank) =>
       _createTeamRank(
