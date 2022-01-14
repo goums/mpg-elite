@@ -71,38 +71,25 @@ const _insertSorted = (array, row) => {
   array.splice(index, 0, row);
 };
 
-module.exports.getFirstPhaseRanking = async () => {
-  const season = (parseInt(mpgSeason) - 1).toString();
-  const { usersTeams } = await _callApi(_divisionEndpoint("", mpgLeague, season));
-  const users = {};
-  Object.keys(usersTeams).forEach((k) => (users[usersTeams[k]] = k));
-  const teams = await _callApi(_divisionEndpoint("/teams", mpgLeague, season));
-  const data = await _callApi(_divisionEndpoint("/ranking/standings", mpgLeague, season));
-  return data.standings.map((rank) =>
-    _createTeamRank(
-      teams.find((t) => t.id === rank.teamId),
-      users[rank.teamId],
-      rank
-    )
-  );
-};
+const _getSeasonRanking = async (season) => {
+  const [divisionData, teamsData, rankingData] = await Promise.all([
+    _callApi(_divisionEndpoint("", mpgLeague, season)),
+    _callApi(_divisionEndpoint("/teams", mpgLeague, season)),
+    _callApi(_divisionEndpoint("/ranking/standings", mpgLeague, season))
+  ]);
 
-module.exports.getSecondPhaseRanking = async () => {
-  const { usersTeams } = await _callApi(_divisionEndpoint());
   const users = {};
-  Object.keys(usersTeams).forEach((k) => (users[usersTeams[k]] = k));
-  const teams = await _callApi(_divisionEndpoint("/teams"));
-  const data = await _callApi(_divisionEndpoint("/ranking/standings"));
-  if (data?.standings) {
-    return data.standings.map((rank) =>
+  Object.keys(divisionData.usersTeams).forEach((k) => (users[divisionData.usersTeams[k]] = k));
+  if (rankingData?.standings) {
+    return rankingData.standings.map((rank) =>
       _createTeamRank(
-        teams.find((t) => t.id === rank.teamId),
+        teamsData.find((t) => t.id === rank.teamId),
         users[rank.teamId],
         rank
       )
     );
   } else {
-    return teams.map((team) =>
+    return teamsData.map((team) =>
       _createTeamRank(team, users[team.id], {
         targetMan: false,
         points: 0,
@@ -117,6 +104,15 @@ module.exports.getSecondPhaseRanking = async () => {
       })
     );
   }
+};
+
+module.exports.getFirstPhaseRanking = async () => {
+  const season = (parseInt(mpgSeason) - 1).toString();
+  return _getSeasonRanking(season);
+};
+
+module.exports.getSecondPhaseRanking = async () => {
+  return _getSeasonRanking(mpgSeason);
 };
 
 module.exports.getCumulateRanking = (firstRanking, secondRanking) => {
