@@ -5,18 +5,24 @@ const https = require("https");
 const { isNumber } = require("util");
 
 const mpgToken = process.env.MPG_TOKEN;
+const mpgLeague = process.env.MPG_LEAGUE;
+const mpgSeason = process.env.MPG_SEASON;
+const mpgDivision = process.env.MPG_DIVISION;
 const mpgLeagueCode = process.env.MPG_LEAGUE;
 
-const _leagueEndpoint = (endpoint) => `/league/${mpgLeagueCode}${endpoint}`;
+const _leagueEndpoint = (endpoint = "", league = mpgLeague) => `/league/${league}${endpoint}`;
+const _divisionEndpoint = (endpoint = "", league = mpgLeague, season = mpgSeason, division = mpgDivision) =>
+  `/division/mpg_division_${league}_${season}_${division}${endpoint}`;
 
 const _callApi = (endpoint) => {
   const options = {
-    hostname: "api.monpetitgazon.com",
+    hostname: "api.mpg.football",
     path: endpoint,
     headers: {
       Authorization: mpgToken,
-      platform: "web",
-      "client-version": "6.9.1"
+      platform: "ios",
+      "client-version": "8.9.2",
+      "api-version": "5"
     }
   };
   debug("Calling api:", options.path);
@@ -34,20 +40,20 @@ const _callApi = (endpoint) => {
   });
 };
 
-const _createTeamRank = (team, rank) => {
+const _createTeamRank = (team, userId, rank) => {
   return {
-    userId: team.userId,
+    userId,
     name: team.name,
     target: rank.targetMan,
     symbol: team.abbr,
     icon: team.jerseyUrl,
     points: rank.points,
     played: rank.played,
-    wins: rank.victory,
-    loses: rank.defeat,
-    draws: rank.draw,
-    goalFor: rank.goal,
-    goalAgainst: rank.goalconceded,
+    wins: rank.won,
+    loses: rank.lost,
+    draws: rank.drawn,
+    goalFor: rank.goals,
+    goalAgainst: rank.goalsConceded,
     difference: rank.difference,
     series: rank.series.split("")
   };
@@ -66,13 +72,34 @@ const _insertSorted = (array, row) => {
 };
 
 module.exports.getFirstPhaseRanking = async () => {
-  const data = await _callApi(_leagueEndpoint("/ranking/winners"));
-  return data.winners.shift().ranking.map((rank) => _createTeamRank(data.teams[rank.teamid], rank));
+  const season = (parseInt(mpgSeason) - 1).toString();
+  const { usersTeams } = await _callApi(_divisionEndpoint("", mpgLeague, season));
+  const users = {};
+  Object.keys(usersTeams).forEach((k) => (users[usersTeams[k]] = k));
+  const teams = await _callApi(_divisionEndpoint("/teams", mpgLeague, season));
+  const data = await _callApi(_divisionEndpoint("/ranking/standings", mpgLeague, season));
+  return data.standings.map((rank) =>
+    _createTeamRank(
+      teams.find((t) => t.id === rank.teamId),
+      users[rank.teamId],
+      rank
+    )
+  );
 };
 
 module.exports.getSecondPhaseRanking = async () => {
-  const data = await _callApi(_leagueEndpoint("/ranking"));
-  return data.ranking.map((rank) => _createTeamRank(data.teams[rank.teamid], rank));
+  const { usersTeams } = await _callApi(_divisionEndpoint());
+  const users = {};
+  Object.keys(usersTeams).forEach((k) => (users[usersTeams[k]] = k));
+  const teams = await _callApi(_divisionEndpoint("/teams"));
+  const data = await _callApi(_divisionEndpoint("/ranking/standings"));
+  return data.standings.map((rank) =>
+    _createTeamRank(
+      teams.find((t) => t.id === rank.teamId),
+      users[rank.teamId],
+      rank
+    )
+  );
 };
 
 module.exports.getCumulateRanking = (firstRanking, secondRanking) => {
@@ -96,16 +123,21 @@ module.exports.getCumulateRanking = (firstRanking, secondRanking) => {
 };
 
 module.exports.getCalendar = async (day = null) => {
-  const { data } = await _callApi(_leagueEndpoint(`/calendar/${day ?? ""}`));
+  if (!day) {
+    const divisionData = await _callApi(_divisionEndpoint());
+    day = divisionData.liveState.currentGameWeek;
+  }
+
+  const data = await _callApi(_divisionEndpoint(`/game-week/${day}/matches`));
 
   //retrieve full match details
-  if (data.results.live || data.results.date < new Date().getTime()) {
+  if (data.results && (data.results.live || data.results.date < new Date().getTime())) {
     data.results.matches = await Promise.all(
       data.results.matches.map(async (match) => getMatch(match.id, data.results.live))
     );
   }
 
-  return data.results;
+  return data.divisionMatches;
 };
 
 const _addPlayer = (player, defBonus, teamPlayers, teamSubstitutes) => {
