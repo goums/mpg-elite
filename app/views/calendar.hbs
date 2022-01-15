@@ -101,8 +101,7 @@
           <td class="index__score___3hXZ9">
             {{#if (isInt teamHome.score)}}
             <a class="index__scoreLink___2rJFE"
-              href=""
-              _href="{{#if ../live}}/match/live/{{id}}{{else}}/match/{{id}}{{/if}}">{{teamHome.score}} -
+              href="/match/{{id}}">{{teamHome.score}} -
               {{teamAway.score}}</a>
             {{else}}
             -
