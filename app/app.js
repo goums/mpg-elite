@@ -36,7 +36,6 @@ app.engine(
       gt: (a, b) => a > b,
       isInt: (a) => Number.isInteger(a),
       loop: (n) => Array(n).fill(true),
-      teamJersey: (team) => (team ? `graphics/teams/team-${team}` : "graphics/teams/team-rotaldo"),
       timestampToDate: (t) => {
         const date = new Date(t);
         const d = date.getDate();
