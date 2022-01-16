@@ -411,7 +411,7 @@ const _reformatPlayers = (players, clubsData, captain) => {
     }
     p.name = p.lastName;
     p.teamid = p.clubId ? p.clubId.split("_").pop() : 0;
-    p.starter = p.status > 2 ? -1 : p.status;
+    p.starter = p.status ? (p.status > 2 ? -1 : p.status) : p.compositionStatus > 2 ? -1 : p.compositionStatus;
     p.goals = {
       mpg: p.mpgGoals ?? 0,
       goal: p.goals ?? 0,
