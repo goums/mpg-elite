@@ -31,6 +31,11 @@
           {{/each}}
           {{/if}}
           {{/if}}
+          {{#if canceledKeeperGoal}}
+          <span class="index__ball___39Bld  index__root___2XTpz jss6 goal cancel_keeper_goal">{{>
+            graphics/goal}}</span>
+          <span style="position:absolute;font-size:13px">✋</span>
+          {{/if}}
         </span>
         <span class="status {{#if rating}}rate{{/if}}">
           {{#if rating}}
