@@ -532,7 +532,6 @@ const getMatch = async (matchId) => {
     _addPlayerGoals(player, matchData.teamHome.goals, matchData.teamAway.goals);
   });
   awayPlayers.forEach((player) => {
-    console.log("Away player:", player);
     _addPlayer(player, matchData.teamAway.players, matchData.teamAway.substitutePlayers);
     _addPlayerGoals(player, matchData.teamAway.goals, matchData.teamHome.goals);
   });
