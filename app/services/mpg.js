@@ -219,6 +219,7 @@ const _addPlayer = (player, teamPlayers, teamSubstitutes) => {
 const _addPlayerGoals = (player, teamGoals, adversaryGoals) => {
   if (!player.playerId && !player.id) return;
   if (parseInt(player.number) > 11) return;
+  if (player.isVirtualSubstitue) return;
 
   //look for substituted player
   if (player.virtualSubstitute) {
@@ -259,6 +260,7 @@ const calculateVirtualPlayers = (players, substitutes) => {
     if (subTact && p.virtualRating + p.virtualBonus < subTact.rating) {
       if (subTact.subPlayer && subTact.subPlayer.rating) {
         p.virtualSubstitute = subTact.subPlayer;
+        subTact.subPlayer.isVirtualSubstitue = true;
         //remove substitute from available ones
         availableSubstitutes = availableSubstitutes.filter((s) => s.playerId !== subTact.subId);
       }
@@ -270,6 +272,7 @@ const calculateVirtualPlayers = (players, substitutes) => {
       if (sub && sub.rating) {
         console.log(`GOAL SUBSTITUE: ${sub.name} replace ${p.name}`);
         p.virtualSubstitute = sub;
+        sub.isVirtualSubstitue = true;
       }
     }
   });
@@ -294,6 +297,7 @@ const calculateVirtualPlayers = (players, substitutes) => {
           subPlayer.rating = subPlayer.rating - (p.position - subPlayer.position);
           console.log(`Substitution: ${subPlayer.name} replace ${p.name} with rating ${subPlayer.rating}`);
           p.virtualSubstitute = subPlayer;
+          subPlayer.isVirtualSubstitue = true;
           //remove substitute from available ones
           availableSubstitutes = availableSubstitutes.filter((s) => s.playerId !== subPlayer.playerId);
           subFound = true;
@@ -528,6 +532,7 @@ const getMatch = async (matchId) => {
     _addPlayerGoals(player, matchData.teamHome.goals, matchData.teamAway.goals);
   });
   awayPlayers.forEach((player) => {
+    console.log("Away player:", player);
     _addPlayer(player, matchData.teamAway.players, matchData.teamAway.substitutePlayers);
     _addPlayerGoals(player, matchData.teamAway.goals, matchData.teamHome.goals);
   });
