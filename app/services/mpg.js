@@ -468,9 +468,13 @@ const getMatch = async (matchId) => {
     composition: matchData.away.composition
   };
 
+  const homeAlreadyOnPitch = {};
   Object.keys(matchData.home.playersOnPitch).forEach((number) => {
     const onPitch = matchData.home.playersOnPitch[number];
     if (onPitch.playerId) {
+      if (homeAlreadyOnPitch[onPitch.playerId]) return;
+      homeAlreadyOnPitch[onPitch.playerId] = true;
+
       if (onPitch.isSub === "mandatory" && !onPitch.starterId) {
         // Retreive original starter player at this position
         Object.keys(matchData.home.playersOnPitch).forEach((num) => {
@@ -490,9 +494,13 @@ const getMatch = async (matchId) => {
     }
   });
   const homePlayers = _reformatPlayers(Object.values(matchData.home.players), clubsData, matchData.home.captain);
+  const awayAlreadyOnPitch = {};
   Object.keys(matchData.away.playersOnPitch).forEach((number) => {
     const onPitch = matchData.away.playersOnPitch[number];
     if (onPitch.playerId) {
+      if (awayAlreadyOnPitch[onPitch.playerId]) return;
+      awayAlreadyOnPitch[onPitch.playerId] = true;
+
       if (onPitch.isSub === "mandatory" && !onPitch.starterId) {
         // Retreive original starter player at this position
         Object.keys(matchData.away.playersOnPitch).forEach((num) => {
