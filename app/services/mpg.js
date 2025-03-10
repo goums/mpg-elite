@@ -4,7 +4,8 @@ const debug = require("debug")("mpg:api");
 const https = require("https");
 const { isNumber } = require("util");
 
-const mpgToken = process.env.MPG_TOKEN;
+const mpgSessionToken = process.env.MPG_SESSION_TOKEN;
+let mpgToken = process.env.MPG_TOKEN;
 const mpgLeague = process.env.MPG_LEAGUE;
 const mpgSeason = process.env.MPG_SEASON;
 const mpgDivision = process.env.MPG_DIVISION;
@@ -13,7 +14,98 @@ const _leagueEndpoint = (endpoint = "", league = mpgLeague) => `/league/${league
 const _divisionEndpoint = (endpoint = "", league = mpgLeague, season = mpgSeason, division = mpgDivision) =>
   `/division/mpg_division_${league}_${season}_${division}${endpoint}`;
 
-const _callApi = (endpoint) => {
+const _refreshAuthToken = () => {
+  debug("Refreshing authentication token");
+  return new Promise((resolve, reject) => {
+    
+    // Split the cookie string into individual cookies
+    const cookies = {
+      "__session": mpgSessionToken
+    };
+    
+    // Build the cookie string from the map
+    const cookieString = Object.entries(cookies)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('; ');
+    
+    const options = {
+      hostname: "mpg.football",
+      path: "/auth/refresh",
+      method: "GET",
+      headers: {
+        Cookie: cookieString,
+        "Referer": "https://mpg.football/matches/live"
+      }
+    };
+    
+    const req = https.request(options, (res) => {
+      res.setEncoding("utf8");
+      const body = [];
+      res.on("data", (chunk) => body.push(chunk));
+      res.on("end", () => {
+        if (res.statusCode === 200) {
+          try {
+            const parsedData = JSON.parse(body.join(""));
+            debug(`Refresh token response: ${JSON.stringify(parsedData)}`);
+            if (parsedData.accessToken) {
+              debug("Successfully refreshed auth token");
+              
+              // Update the session token with the new access token
+              try {
+                // Parse the current session token (it's a JWT)
+                const sessionData = JSON.parse(Buffer.from(mpgSessionToken.split('.')[1], 'base64').toString());
+                
+                // Update the user data with the new access token and refresh token
+                if (sessionData.user) {
+                  sessionData.user.accessToken = parsedData.accessToken;
+                  if (parsedData.refreshToken) {
+                    
+                    sessionData.user.refreshToken = parsedData.refreshToken;
+                  }
+                  
+                  // Update expiry times if provided
+                  if (parsedData.expiresIn) {
+                    const now = Date.now();
+                    sessionData.user.expiresIn = parsedData.expiresIn;
+                    sessionData.user.lastRefreshed = now;
+                    sessionData.user.expiresAt = now + (parsedData.expiresIn * 1000);
+                  }
+                  
+                  // We would need to re-sign the JWT here, but since we don't have the secret,
+                  // we'll just use the new access token directly
+                  debug("Updated session data with new tokens");
+                }
+              } catch (error) {
+                debug("Error updating session token:", error);
+                // Continue with just the access token if we can't update the session
+              }
+              
+              resolve(parsedData.accessToken);
+            } else {
+              debug("No access token in refresh response");
+              reject(new Error("Failed to refresh authentication token"));
+            }
+          } catch (error) {
+            debug("Error parsing refresh token response:", error);
+            reject(new Error("Failed to parse refresh token response"));
+          }
+        } else {
+          debug(`Token refresh failed with status: ${res.statusCode}`);
+          reject(new Error(`Token refresh failed: ${res.statusCode}`));
+        }
+      });
+    });
+    
+    req.on("error", (error) => {
+      debug("Token refresh request error:", error.message);
+      reject(error);
+    });
+    
+    req.end();
+  });
+};
+
+const _callApi = (endpoint, attemptedRefresh = false) => {
   const options = {
     hostname: "api.mpg.football",
     path: endpoint,
@@ -32,10 +124,37 @@ const _callApi = (endpoint) => {
         const body = [];
         res.on("data", (chunk) => body.push(chunk));
         res.on("end", () => {
-          resolve(JSON.parse(body.join("")));
+          if (res.statusCode === 401 && !attemptedRefresh) {
+            debug("Authentication error: 401 Unauthorized");
+            // Try to refresh the token and retry the request, but only once
+            _refreshAuthToken()
+              .then(newToken => {
+                // Update the global token
+                mpgToken = newToken;
+                
+                debug("Retrying request with new token");
+                return _callApi(endpoint, true); // Mark that we've attempted a refresh
+              })
+              .then(resolve)
+              .catch(error => {
+                debug("Token refresh failed:", error.message);
+                reject(new Error("Authentication failed: Unable to refresh token"));
+              });
+          } else {
+            try {
+              const parsedData = JSON.parse(body.join(""));
+              resolve(parsedData);
+            } catch (error) {
+              debug("Error parsing JSON response:", error);
+              reject(new Error("Failed to parse API response"));
+            }
+          }
         });
       })
-      .on("error", reject);
+      .on("error", (error) => {
+        debug("API request error:", error.message);
+        reject(error);
+      });
   });
 };
 
