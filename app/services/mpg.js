@@ -61,6 +61,7 @@ const _refreshAuthToken = async () => {
               let newSessionToken = null;
               try {
                 const setCookieHeaders = res.headers['set-cookie'] || [];
+                debug("Refresh token response Set-Cookie headers:", setCookieHeaders);
                 for (const cookieStr of setCookieHeaders) {
                   if (cookieStr.startsWith('__session=')) {
                     newSessionToken = cookieStr.split(';')[0].split('=')[1];
