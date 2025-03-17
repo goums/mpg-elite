@@ -3,20 +3,27 @@
 const debug = require("debug")("mpg:api");
 const https = require("https");
 const { isNumber } = require("util");
+const db = require("./db");
 
-const mpgSessionToken = process.env.MPG_SESSION_TOKEN;
-let mpgToken = process.env.MPG_TOKEN;
+let mpgSessionToken = null;
+let mpgToken = null;
+
 const mpgLeague = process.env.MPG_LEAGUE;
 const mpgSeason = process.env.MPG_SEASON;
 const mpgDivision = process.env.MPG_DIVISION;
+
+const initTokens = async () => {
+  mpgSessionToken = await db.getConfig("MPG_SESSION_TOKEN");
+  mpgToken = await db.getConfig("MPG_TOKEN");
+}
 
 const _leagueEndpoint = (endpoint = "", league = mpgLeague) => `/league/${league}${endpoint}`;
 const _divisionEndpoint = (endpoint = "", league = mpgLeague, season = mpgSeason, division = mpgDivision) =>
   `/division/mpg_division_${league}_${season}_${division}${endpoint}`;
 
-const _refreshAuthToken = () => {
+const _refreshAuthToken = async () => {
   debug("Refreshing authentication token");
-  return new Promise((resolve, reject) => {
+  const newTokens = await new Promise((resolve, reject) => {
     
     // Split the cookie string into individual cookies
     const cookies = {
@@ -50,37 +57,25 @@ const _refreshAuthToken = () => {
             if (parsedData.accessToken) {
               debug("Successfully refreshed auth token");
               
-              // Update the session token with the new access token
+              // Get the new session token from cookies in response headers
+              let newSessionToken = null;
               try {
-                // Parse the current session token (it's a JWT)
-                const sessionData = JSON.parse(Buffer.from(mpgSessionToken.split('.')[1], 'base64').toString());
-                
-                // Update the user data with the new access token and refresh token
-                if (sessionData.user) {
-                  sessionData.user.accessToken = parsedData.accessToken;
-                  if (parsedData.refreshToken) {
-                    
-                    sessionData.user.refreshToken = parsedData.refreshToken;
+                const setCookieHeaders = res.headers['set-cookie'] || [];
+                for (const cookieStr of setCookieHeaders) {
+                  if (cookieStr.startsWith('__session=')) {
+                    newSessionToken = cookieStr.split(';')[0].split('=')[1];
+                    debug("New session token retrieved from response");
+                    break;
                   }
-                  
-                  // Update expiry times if provided
-                  if (parsedData.expiresIn) {
-                    const now = Date.now();
-                    sessionData.user.expiresIn = parsedData.expiresIn;
-                    sessionData.user.lastRefreshed = now;
-                    sessionData.user.expiresAt = now + (parsedData.expiresIn * 1000);
-                  }
-                  
-                  // We would need to re-sign the JWT here, but since we don't have the secret,
-                  // we'll just use the new access token directly
-                  debug("Updated session data with new tokens");
                 }
               } catch (error) {
-                debug("Error updating session token:", error);
-                // Continue with just the access token if we can't update the session
+                debug("Error extracting session token from response:", error);
               }
               
-              resolve(parsedData.accessToken);
+              resolve({
+                mpgToken: parsedData.accessToken,
+                mpgSessionToken: newSessionToken || mpgSessionToken
+              });
             } else {
               debug("No access token in refresh response");
               reject(new Error("Failed to refresh authentication token"));
@@ -103,9 +98,16 @@ const _refreshAuthToken = () => {
     
     req.end();
   });
+
+  mpgToken = newTokens.mpgToken;
+  mpgSessionToken = newTokens.mpgSessionToken;
+  await db.setConfig("MPG_TOKEN", mpgToken);
+  await db.setConfig("MPG_SESSION_TOKEN", mpgSessionToken);
 };
 
-const _callApi = (endpoint, attemptedRefresh = false) => {
+const _callApi = async (endpoint, attemptedRefresh = false) => {
+  if(!mpgToken) await initTokens();
+
   const options = {
     hostname: "api.mpg.football",
     path: endpoint,
@@ -128,10 +130,7 @@ const _callApi = (endpoint, attemptedRefresh = false) => {
             debug("Authentication error: 401 Unauthorized");
             // Try to refresh the token and retry the request, but only once
             _refreshAuthToken()
-              .then(newToken => {
-                // Update the global token
-                mpgToken = newToken;
-                
+              .then(() => {
                 debug("Retrying request with new token");
                 return _callApi(endpoint, true); // Mark that we've attempted a refresh
               })
