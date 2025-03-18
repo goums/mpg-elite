@@ -21,89 +21,112 @@ const _leagueEndpoint = (endpoint = "", league = mpgLeague) => `/league/${league
 const _divisionEndpoint = (endpoint = "", league = mpgLeague, season = mpgSeason, division = mpgDivision) =>
   `/division/mpg_division_${league}_${season}_${division}${endpoint}`;
 
+let refreshTokenPromise = null;
+
 const _refreshAuthToken = async () => {
+  // If there's already a refresh in progress, return that promise
+  if (refreshTokenPromise) {
+    debug("Auth token refresh already in progress, waiting for it to complete");
+    return refreshTokenPromise;
+  }
+
   debug("Refreshing authentication token");
-  const newTokens = await new Promise((resolve, reject) => {
-    
-    // Split the cookie string into individual cookies
-    const cookies = {
-      "__session": mpgSessionToken
-    };
-    
-    // Build the cookie string from the map
-    const cookieString = Object.entries(cookies)
-      .map(([key, value]) => `${key}=${value}`)
-      .join('; ');
-    
-    const options = {
-      hostname: "mpg.football",
-      path: "/auth/refresh",
-      method: "GET",
-      headers: {
-        Cookie: cookieString,
-        "Referer": "https://mpg.football/matches/live"
-      }
-    };
-    
-    const req = https.request(options, (res) => {
-      res.setEncoding("utf8");
-      const body = [];
-      res.on("data", (chunk) => body.push(chunk));
-      res.on("end", () => {
-        if (res.statusCode === 200) {
-          try {
-            const parsedData = JSON.parse(body.join(""));
-            debug(`Refresh token response: ${JSON.stringify(parsedData)}`);
-            if (parsedData.accessToken) {
-              debug("Successfully refreshed auth token");
-              
-              // Get the new session token from cookies in response headers
-              let newSessionToken = null;
+  
+  // Create a new promise and store it
+  refreshTokenPromise = (async () => {
+    try {
+      const newTokens = await new Promise((resolve, reject) => {
+        const cookies = {
+          "__session": mpgSessionToken
+        };
+        
+        const cookieString = Object.entries(cookies)
+          .map(([key, value]) => `${key}=${value}`)
+          .join('; ');
+        
+        const options = {
+          hostname: "mpg.football",
+          path: "/auth/refresh",
+          method: "GET",
+          headers: {
+            Cookie: cookieString,
+            "Referer": "https://mpg.football/matches/live"
+          }
+        };
+        
+        const req = https.request(options, (res) => {
+          res.setEncoding("utf8");
+          const body = [];
+          res.on("data", (chunk) => body.push(chunk));
+          res.on("end", () => {
+            if (res.statusCode === 200) {
               try {
-                const setCookieHeaders = res.headers['set-cookie'] || [];
-                debug("Refresh token response Set-Cookie headers:", setCookieHeaders);
-                for (const cookieStr of setCookieHeaders) {
-                  if (cookieStr.startsWith('__session=')) {
-                    newSessionToken = cookieStr.split(';')[0].split('=')[1];
-                    debug("New session token retrieved from response");
-                    break;
+                const parsedData = JSON.parse(body.join(""));
+                debug(`Refresh token response: ${JSON.stringify(parsedData)}`);
+                if (parsedData.accessToken) {
+                  debug("Successfully refreshed auth token");
+                  
+                  // Get the new session token from cookies in response headers
+                  let newSessionToken = null;
+                  try {
+                    const setCookieHeaders = res.headers['set-cookie'] || [];
+                    debug("Refresh token response Set-Cookie headers:", setCookieHeaders);
+                    for (const cookieStr of setCookieHeaders) {
+                      if (cookieStr.startsWith('__session=')) {
+                        newSessionToken = cookieStr.split(';')[0].split('=')[1];
+                        debug("New session token retrieved from response");
+                        break;
+                      }
+                    }
+                  } catch (error) {
+                    debug("Error extracting session token from response:", error);
                   }
+                  
+                  resolve({
+                    mpgToken: parsedData.accessToken,
+                    mpgSessionToken: newSessionToken || mpgSessionToken
+                  });
+                } else {
+                  debug("No access token in refresh response");
+                  reject(new Error("Failed to refresh authentication token"));
                 }
               } catch (error) {
-                debug("Error extracting session token from response:", error);
+                debug("Error parsing refresh token response:", error);
+                reject(new Error("Failed to parse refresh token response"));
               }
-              
-              resolve({
-                mpgToken: parsedData.accessToken,
-                mpgSessionToken: newSessionToken || mpgSessionToken
-              });
             } else {
-              debug("No access token in refresh response");
-              reject(new Error("Failed to refresh authentication token"));
+              debug(`Token refresh failed with status: ${res.statusCode}`);
+              reject(new Error(`Token refresh failed: ${res.statusCode}`));
             }
-          } catch (error) {
-            debug("Error parsing refresh token response:", error);
-            reject(new Error("Failed to parse refresh token response"));
-          }
-        } else {
-          debug(`Token refresh failed with status: ${res.statusCode}`);
-          reject(new Error(`Token refresh failed: ${res.statusCode}`));
-        }
+          });
+        });
+        
+        req.on("error", (error) => {
+          debug("Token refresh request error:", error.message);
+          reject(error);
+        });
+        
+        req.end();
       });
-    });
-    
-    req.on("error", (error) => {
-      debug("Token refresh request error:", error.message);
-      reject(error);
-    });
-    
-    req.end();
+      
+      // Update the global tokens
+      mpgToken = newTokens.mpgToken;
+      mpgSessionToken = newTokens.mpgSessionToken;
+      
+      // Save to database 
+      await db.setConfig("MPG_TOKEN", mpgToken);
+      await db.setConfig("MPG_SESSION_TOKEN", mpgSessionToken);
+      
+      return newTokens;
+    } catch (error) {
+      throw error;
+    }
+  })().finally(() => {
+    // Clear the stored promise when the operation completes
+    refreshTokenPromise = null;
   });
-
-  mpgToken = newTokens.mpgToken;
-  mpgSessionToken = newTokens.mpgSessionToken;
-  await db.setConfig("MPG_TOKEN", mpgToken);
-  await db.setConfig("MPG_SESSION_TOKEN", mpgSessionToken);
+  
+  return refreshTokenPromise;
 };
 
 const _callApi = async (endpoint, attemptedRefresh = false) => {
